@@ -1,0 +1,4 @@
+Django
+environs
+django-crontab
+mysqlclient
