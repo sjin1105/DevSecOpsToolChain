@@ -1,0 +1,13 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mysql-init
+spec:
+  template:
+    spec:
+      containers:
+      - image: parlyresk/mysql-test:5.0
+        name: init-hellomysql
+        command: ["sh", "-c"]
+        args: ["mysql -udjango -ppython3.10 -h mysql-cluster.mysql-cluster.svc.cluster.local < init.sql"]
+      restartPolicy: OnFailure
