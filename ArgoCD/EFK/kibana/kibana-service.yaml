@@ -8,6 +8,5 @@ metadata:
 spec:
   ports:
   - port: 33000
-  type: ClusterIP
   selector:
     app: kibana
