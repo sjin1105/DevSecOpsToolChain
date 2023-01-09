@@ -9,9 +9,7 @@ spec:
   ports:
   - port: 33000
     name: view
-    targetPort: 5601
-    #nodePort: 30930
-  #type: NodePort
-  type: LoadBalancer
+    nodePort: 30930
+  type: NodePort
   selector:
     app: kibana
