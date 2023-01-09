@@ -8,8 +8,6 @@ metadata:
 spec:
   ports:
   - port: 33000
-    name: view
-    nodePort: 30930
-  type: NodePort
+  type: ClusterIP
   selector:
     app: kibana
