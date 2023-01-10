@@ -10,6 +10,6 @@ spec:
     name: view
     targetPort: 5601
     #nodePort: 30930
-  type: NodePort
+  type: ClusterIP
   selector:
     app: kibana
