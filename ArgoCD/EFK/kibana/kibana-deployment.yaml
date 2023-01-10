@@ -1,7 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: logging
   name: kibana
   labels:
     app: kibana
