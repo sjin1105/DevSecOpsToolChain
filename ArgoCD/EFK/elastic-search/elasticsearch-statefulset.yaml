@@ -64,7 +64,7 @@ spec:
   - metadata:
       name: elasticsearch-persistent-storage
       annotations:
-        volume.beta.kubernetes.io/storage-class: ""
+        volume.beta.kubernetes.io/storage-class: "gp2"
     spec:
       accessModes: [ "ReadWriteOnce" ]
       storageClassName: standard
