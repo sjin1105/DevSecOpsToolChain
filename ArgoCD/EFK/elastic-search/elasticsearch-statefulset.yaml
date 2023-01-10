@@ -1,7 +1,6 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  namespace: logging
   name: elasticsearch-node
   labels:
     app: elasticsearch
