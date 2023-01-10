@@ -5,7 +5,7 @@ metadata:
   labels:
     name: elasticsearch
 spec:
-  storageClassName: standard
+  storageClassName:
   capacity:
     storage: 1Gi
   volumeMode: Filesystem
