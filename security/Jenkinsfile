@@ -18,8 +18,8 @@ node {
             withSonarQubeEnv('sonarserver'){
                     sh "mvn sonar:sonar \
 		-Dsonar.projectKey=sonarqube \
-		-Dsonar.host.url=http://192.168.160.234:9000 \
-		-Dsonar.login=1089bf1c1f3fd28c831ce744752e9f0a1124a5d6 \
+		-Dsonar.host.url=http://192.168.160.244:9000 \
+		-Dsonar.login=8f74a3057b93ec2c2bb9816a7e7e14d17b21c837 \
 		-Dsonar.sources=. \
 		-Dsonar.report.export.path=sonar-report.json \
 		-Dsonar.exclusions=report/* \
