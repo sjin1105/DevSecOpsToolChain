@@ -30,7 +30,7 @@ node {
       // Build the image and push it to a staging repository
       app = docker.build("test/test", "--network host -f Dockerfile .")
 /*      repotag = inputConfig['dockerRepository'] + ":${BUILD_NUMBER}"  */
-      docker.withRegistry(inputConfig['HarborRegistryUrl'], inputConfig['dockerCredentials']) {
+	    docker.withRegistry({$params.HarborRegistryUrl}, {$params.dockerCredentials}) {
 /*        app = docker.build(test/test)
         app.push() */
 	app.push("$BUILD_NUMBER")
@@ -47,11 +47,11 @@ node {
       },
       Analyze: {
         writeFile file: anchorefile, \
-	      /*text: inputConfig['HarborRegistryHostname']*/
+	      /*text: ${params.HarborRegistryHostname'}*/
 	      text: "192.168.160.244" +  "/" + "test/test" + " " + dockerfile
         anchore name: anchorefile, \
-	      engineurl: inputConfig['anchoreEngineUrl'], \
-	      engineCredentialsId: inputConfig['anchoreEngineCredentials'], \
+	      engineurl: {$params.anchoreEngineUrl}, \
+	      engineCredentialsId: {$params.anchoreEngineCredentials}, \
 	      annotations: [[key: 'added-by', value: 'jenkins']], \
 	      forceAnalyze: true
       }
