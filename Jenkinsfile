@@ -1,27 +1,108 @@
+stage('Configure') {
+    abort = false
+    inputConfig = input id: 'InputConfig', message: 'Docker registry and Anchore Engine configuration', \
+	parameters: [string(defaultValue: 'https://192.168.160.244', description: 'URL of the Harbor registry for staging images before analysis', name: 'HarborRegistryUrl', trim: true), \
+		     string(defaultValue: 'https://192.168.160.244', description: 'Hostname of the Harbor registry', name: 'HarborRegistryHostname', trim: true), \
+		     string(defaultValue: 'test/test', description: 'Name of the docker repository', name: 'dockerRepository', trim: true), \
+		     credentials(credentialType: 'com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl', defaultValue: 'harbor', description: 'Credentials for connecting to the docker registry', name: 'dockerCredentials', required: true), \
+		     string(defaultValue: 'http://192.168.160.244:8228/v1', description: 'Anchore Engine API endpoint', name: 'anchoreEngineUrl', trim: true), \
+		     credentials(credentialType: 'com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl', defaultValue: 'admin', description: 'Credentials for interacting with Anchore Engine', name: 'anchoreEngineCredentials', required: true)]
+	buildWithParameters
+    for (config in inputConfig) {
+        if (null == config.value || config.value.length() <= 0) {
+          echo "${config.key} cannot be left blank"
+          abort = true
+        }
+    }
+
+    if (abort) {
+        currentBuild.result = 'ABORTED'
+        error('Aborting build due to invalid input')
+    }
+}
+
 node {
-     stage('Clone repository') {
-	 checkout scm
+  def app
+  def dockerfile
+  def anchorefile
+  def repotag
+
+  try {
+    stage('Checkout') {
+      // Clone the git repository
+      checkout scm
+      def path = sh returnStdout: true, script: "pwd"
+      path = path.trim()
+      dockerfile = path + "/Dockerfile"
+      anchorefile = path + "/anchore_images"
+    }
+
+    stage('Build') {
+      // Build the image and push it to a staging repository
+      app = docker.build("test/test", "--network host -f Dockerfile .")
+/*      repotag = inputConfig['dockerRepository'] + ":${BUILD_NUMBER}"  */
+      docker.withRegistry(inputConfig['HarborRegistryUrl'], inputConfig['dockerCredentials']) {
+/*        app = docker.build(test/test)
+        app.push() */
+	app.push("$BUILD_NUMBER")
+	app.push("latest")
+      }
+      sh script: "echo Build completed"
+    }
+
+    stage('Parallel') {
+      parallel Test: {
+        app.inside {
+            sh 'echo "Dummy - tests passed"'
+        }
+      },
+      Analyze: {
+        writeFile file: anchorefile, \
+	      /*text: inputConfig['HarborRegistryHostname']*/
+	      text: "192.168.160.244" +  "/" + "test/test" + " " + dockerfile
+        anchore name: anchorefile, \
+	      engineurl: inputConfig['anchoreEngineUrl'], \
+	      engineCredentialsId: inputConfig['anchoreEngineCredentials'], \
+	      annotations: [[key: 'added-by', value: 'jenkins']], \
+	      forceAnalyze: true
+      }
+    }
+  } finally {
+    stage('Cleanup') {
+      // Delete the docker image and clean up any allotted resources
+      sh script: "echo Clean up"
+    }
+  }
+     stage('OWASP Dependency-Check Vulnerabilities ') {
+        dependencyCheck additionalArguments: '''
+		-s "." 
+		-f "ALL"
+		-o "./report/"
+		--prettyPrint
+		--disableYarnAudit''', odcInstallation: 'OWASP Dependency-check'
+		dependencyCheckPublisher pattern: 'report/dependency-check-report.xml'
      }
-     stage('Build image') {
-         app = docker.build("sjin1105/django")
-     }
-     stage('Push image') {
-         docker.withRegistry('https://registry.hub.docker.com', 'docker-hub') {
-         app.push("$BUILD_NUMBER")
-	     app.push("latest")
+     stage('SonarQube analysis') {
+	    def scannerHome = tool 'sonarqube';
+            withSonarQubeEnv('sonarserver'){
+                    sh "${scannerHome}/bin/sonar-scanner \
+		-Dsonar.projectKey=sonarqube \
+		-Dsonar.host.url=http://192.168.160.244:9000 \
+		-Dsonar.login=807e0f2bc82e3c377436e2b6292ed7bc73b04e24 \
+		-Dsonar.sources=. \
+		-Dsonar.report.export.path=sonar-report.json \
+		-Dsonar.exclusions=report/* \
+		-Dsonar.dependencyCheck.jsonReportPath=./report/dependency-check-report.json \
+		-Dsonar.dependencyCheck.xmlReportPath=./report/dependency-check-report.xml \
+		-Dsonar.dependencyCheck.htmlReportPath=./report/dependency-check-report.html"
          }
      }
-     stage('K8S Manifest Update') {
-         withCredentials([usernamePassword(credentialsId: 'git_key', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-
-			 sh('git config --global user.email "sjin110550@gmail.com"')
-			 sh('git config --global user.name "sjin110550"')
-			 sh('git checkout main')
-			 sh('git pull https://github.com/seungjin-1105/ParkingReservationProject-kubernetes.git')
-			 sh('sed -i "s|image: sjin1105/django.*|image: sjin1105/django:$BUILD_NUMBER|g" ./ArgoCD/django/django-deploy.yaml')
-			 sh('git add .')
-			 sh('git commit -m "$BUILD_NUMBER"')
-			 sh('git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/seungjin-1105/ParkingReservationProject-kubernetes.git')
-                    }
+        stage('SonarQube Quality Gate'){
+    	 timeout(time: 1, unit: 'HOURS') {
+              def qg = waitForQualityGate()
+              if (qg.status != 'OK') {
+                  error "Pipeline aborted due to quality gate failure: ${qg.status}"
+              }
+          
+          }
      }
-}
