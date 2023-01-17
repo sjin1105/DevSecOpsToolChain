@@ -1,24 +1,11 @@
 stage('Configure') {
-    abort = false
-    inputConfig = input id: 'InputConfig', message: 'Docker registry and Anchore Engine configuration', \
-	parameters: [string(defaultValue: 'https://192.168.160.244', description: 'URL of the Harbor registry for staging images before analysis', name: 'HarborRegistryUrl', trim: true), \
+	
+	inputConfig = [string(defaultValue: 'https://192.168.160.244', description: 'URL of the Harbor registry for staging images before analysis', name: 'HarborRegistryUrl', trim: true), \
 		     string(defaultValue: 'https://192.168.160.244', description: 'Hostname of the Harbor registry', name: 'HarborRegistryHostname', trim: true), \
 		     string(defaultValue: 'test/test', description: 'Name of the docker repository', name: 'dockerRepository', trim: true), \
 		     credentials(credentialType: 'com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl', defaultValue: 'harbor', description: 'Credentials for connecting to the docker registry', name: 'dockerCredentials', required: true), \
 		     string(defaultValue: 'http://192.168.160.244:8228/v1', description: 'Anchore Engine API endpoint', name: 'anchoreEngineUrl', trim: true), \
 		     credentials(credentialType: 'com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl', defaultValue: 'admin', description: 'Credentials for interacting with Anchore Engine', name: 'anchoreEngineCredentials', required: true)]
-	buildWithParameters
-    for (config in inputConfig) {
-        if (null == config.value || config.value.length() <= 0) {
-          echo "${config.key} cannot be left blank"
-          abort = true
-        }
-    }
-
-    if (abort) {
-        currentBuild.result = 'ABORTED'
-        error('Aborting build due to invalid input')
-    }
 }
 
 node {
