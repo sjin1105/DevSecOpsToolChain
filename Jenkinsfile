@@ -50,8 +50,8 @@ node {
 	      /*text: ${params.HarborRegistryHostname'}*/
 	      text: "192.168.160.244" +  "/" + "test/test" + " " + dockerfile
         anchore name: anchorefile, \
-	      engineurl: {$params.anchoreEngineUrl}, \
-	      engineCredentialsId: {$params.anchoreEngineCredentials}, \
+	      engineurl: ${params.anchoreEngineUrl}, \
+	      engineCredentialsId: ${params.anchoreEngineCredentials}, \
 	      annotations: [[key: 'added-by', value: 'jenkins']], \
 	      forceAnalyze: true
       }
