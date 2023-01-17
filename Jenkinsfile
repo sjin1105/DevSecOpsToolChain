@@ -1,14 +1,3 @@
-stage('Configure') {
-	
-	parameters { \
-	     string(defaultValue: 'https://192.168.160.244', description: 'URL of the Harbor registry for staging images before analysis', name: 'HarborRegistryUrl', trim: true) \
-	     string(defaultValue: 'https://192.168.160.244', description: 'Hostname of the Harbor registry', name: 'HarborRegistryHostname', trim: true) \
-	     string(defaultValue: 'test/test', description: 'Name of the docker repository', name: 'dockerRepository', trim: true) \
-	     credentials(credentialType: 'com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl', defaultValue: 'harbor', description: 'Credentials for connecting to the docker registry', name: 'dockerCredentials', required: true) \
-	     string(defaultValue: 'http://192.168.160.244:8228/v1', description: 'Anchore Engine API endpoint', name: 'anchoreEngineUrl', trim: true) \
-	     credentials(credentialType: 'com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl', defaultValue: 'admin', description: 'Credentials for interacting with Anchore Engine', name: 'anchoreEngineCredentials', required: true) \
-	}
-}
 
 node {
   def app
@@ -29,10 +18,7 @@ node {
     stage('Build') {
       // Build the image and push it to a staging repository
       app = docker.build("test/test", "--network host -f Dockerfile .")
-/*      repotag = inputConfig['dockerRepository'] + ":${BUILD_NUMBER}"  */
-	    docker.withRegistry("${params.HarborRegistryUrl}", 'harbor') {
-/*        app = docker.build(test/test)
-        app.push() */
+	    docker.withRegistry('https://192.168.160.244', 'harbor') {
 	app.push("$BUILD_NUMBER")
 	app.push("latest")
       }
@@ -47,11 +33,11 @@ node {
       },
       Analyze: {
         writeFile file: anchorefile, \
-	      /*text: "${params.HarborRegistryHostname'}"*/
+	      /*text: 'https://192.168.160.244'*/
 	      text: "192.168.160.244" +  "/" + "test/test" + " " + dockerfile
         anchore name: anchorefile, \
-	      engineurl: "${params.anchoreEngineUrl}", \
-	      engineCredentialsId: "${params.anchoreEngineCredentials}", \
+	      engineurl: 'http://192.168.160.244:8228/v1', \
+	      engineCredentialsId: 'admin', \
 	      annotations: [[key: 'added-by', value: 'jenkins']], \
 	      forceAnalyze: true
       }
