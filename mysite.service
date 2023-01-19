@@ -7,7 +7,7 @@ User=ubuntu
 Group=ubuntu
 WorkingDirectory=/mysite
 EnvironmentFile=/venv/mysite.env
-ExecStart=/home/ubuntu/venv/bin/gunicorn \
+ExecStart=/usr/local/bin/gunicorn \
         --workers 2 \
         --bind unix:/tmp/gunicorn.sock \
         config.wsgi:application
