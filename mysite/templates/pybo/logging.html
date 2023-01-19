@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<div class="twelve">
+    <h2>Logging</h2>
+</div>
+<div style="padding: 2vw;">
+    <iframe src="http://10.108.134.95/app/discover#/?_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-15m,to:now))&_a=(columns:!(_source),filters:!(),index:a1f4e340-96d3-11ed-835c-3b733a6de5e6,interval:auto,query:(language:kuery,query:''),sort:!())" style="display:block; width:95vw; height: 78vh" scrolling="yes"></iframe>
+</div>
+{% endblock %}

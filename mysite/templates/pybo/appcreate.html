@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<div>
+    {% if state == '' %}
+    {% else %}
+    <script>
+        alert('애플리케이션 정보를 입력하세요')
+    </script>
+    {% endif %}
+</div>
+<table style="width: 100%;">
+    <th>    
+        <h3 class="projecthead">&nbsp&nbspCreate Normal Application</h3>
+    </th>
+    <th>
+        <form method='post' class='post-form my-3' action="{% url 'pybo:monitor_list' project.id %}">
+            {% csrf_token %}
+            <input type="hidden" name="PN" id="PN" value="{{ project.NAME }}"  maxlength="100">
+            <button type='submit' class='button-49' role="button" value="Monitor">Monitor</button>
+        </form>
+    </th>
+</table>
+<br>
+<h3 style="margin-left: 8%;"><strong>Project Name : {{ project.NAME }}</strong></h3>
+<br>
+<div id="appcreate0">
+    <br>
+    <div style="margin-left: 24%; margin-right: 17%;">
+        <img src="{% static 'was.png' %}" style="width:220px; height:220px;">
+        <br><br>
+        <h4>웹 애플리케이션</h4>
+        <form method='post' class='post-form my-3' action="{% url 'pybo:webapp' %}">
+            {% csrf_token %}
+            <select name="web" id='web'>
+                <option value="0" disabled selected >종류</option>
+                <option value="wordpress">WordPress</option>
+                <option value="tomcat">Tomcat</option>
+            </select>
+            <br>
+            <br>
+            <input type="hidden" name="PN" id="PN" value="{{ project.NAME }}"  maxlength="100">
+            <input type="hidden" name="PID" id="PID" value="{{ project.id }}"  maxlength="100">
+            <p><Strong>Web User Name</strong></p>
+            <input type="text" placeholder="Web User Name" name="WNAME" id="WNAME" value="">
+            <p><Strong>User Password</strong></p>
+            <input type="password" placeholder="Web User Password" name="WPW" id="WPW" value="">
+            <br>
+            <br>
+            <button type="submit" class="button-55" role="button">생성하기</button>
+        </form>
+    </div>
+    <br>
+    <div>
+        <img src="{% static 'db.png' %}" style="margin-left: 10px; width:160px; height:220px;">
+        <br><br>
+        <h4>DB 애플리케이션</h4>
+        <form method='post' class='post-form my-3' action="{% url 'pybo:dbapp' %}">
+            {% csrf_token %}
+            <select name="db" id='db'>
+                <option value="0" disabled selected >종류</option>
+                <option value="mysql">MySQL</option>
+                <option value="mariadb">MariaDB</option>
+            </select>
+            <br>
+            <br>
+            <input type="hidden" name="PN" id="PN" value="{{ project.NAME }}"  maxlength="100">
+            <input type="hidden" name="PID" id="PID" value="{{ project.id }}"  maxlength="100">
+            <p><Strong>DB Root Password</strong></p>
+            <input type="password" placeholder="DB Root Password" name="RPW" id="RPW" value="">
+            <p><Strong>User ID</strong></p>
+            <input type="text" placeholder="DB User ID" name="UID" id="UID" value="">
+            <p><Strong>User Password</strong></p>
+            <input type="password" placeholder="DB User Password" name="UPW" id="UPW" value="">
+            <p><Strong>Database Name</strong></p>
+            <input type="text" placeholder="DB Name" name="DB" id="DB" value="">
+            <br>
+            <br>
+            <button type='submit' class="button-55" role="button">생성하기</button>
+        </form>
+    </div>
+</div>
+<hr width="75%" style="margin-left: 14%">
+<a href="javascript:void(0)" style="color:red; margin-left: 14%;" class="delete btn btn-sm btn-outline-secondary" data-uri="{% url 'pybo:project_delete' project.id %}">프로젝트 삭제</a>
+<script type='text/javascript'>
+    const delete_elements = document.getElementsByClassName("delete");
+    Array.from(delete_elements).forEach(function(element) {
+        element.addEventListener('click', function() {
+            if(confirm("정말로 삭제하시겠습니까?")) {
+                location.href = this.dataset.uri;
+            };
+        });
+    });
+</script>
+{% endblock %}

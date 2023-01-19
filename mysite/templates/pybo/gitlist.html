@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<h2 class="my-3 border-bottom pb2">&nbsp&nbsp GitHub Application</h2>
+<div>
+    {% if state == '' %}
+    {% else %}
+    <script>
+        alert('{{ state }}')
+    </script>
+    {% endif %}
+</div>
+<div class='container'>
+    <h3><strong>Name &nbsp : {{ project.NAME }}</strong></h3>
+    <div>
+        <ul>
+            {% csrf_token %}
+            <p><Strong>GitHub Repository List</strong></p>
+            <p><Strong>{{ project.GIT }}</Strong></p>
+            <hr /> 
+                <form method='post' class='post-form my-3' action="{% url 'pybo:create_jenkins' project.id %}">
+                    {% csrf_token %}
+                    <button type='submit' class="button-55" role="button" value="Jenkins">기본 Jenkins 작성</button>
+                </form>
+            <hr />
+            {% if addr != '/' %}
+                <form method='post' class='post-form my-3' action="{% url 'pybo:github_listfile' project.id %}">
+                    {% csrf_token %}
+                    <img src="{%static 'folder.png' %}" width="30px" height="30px">
+                    <input type="hidden" name="PATH" id="PATH" value="{{ addr }}">
+                    <input type="hidden" name="FN" id="FN" value="back">
+                    <button type='submit' style="color: darkorange">..</button>
+                </form>
+            {% endif %}
+            {% if git_list %}
+                {% for gl in git_list %}
+                <tr>
+                    {% if gl.type == 'dir' %}
+                    <td>
+                        <form method='post' class='post-form my-3' action="{% url 'pybo:github_listfile' project.id %}">
+                            {% csrf_token %}
+                            <img src="{%static 'folder.png' %}" width="30px" height="30px">
+                            <input type="hidden" name="PATH" id="PATH" value="{{ addr }}">
+                            <input type="hidden" name="FN" id="FN" value="{{ gl.name }}">
+                            <button type='submit' style="color: darkorange">{{ gl.name }}</button>
+                        </form>
+                    </td>
+                    {% elif gl.type == 'file' %}
+                    <td>
+                        <form method='GET' class='post-form my-3' action="{% url 'pybo:github_createfile' project.id %}">
+                            {% csrf_token %}
+                            <img src="{%static 'file.png' %}" width="30px" height="30px">
+                            <input type="hidden" name="PATH" id="PATH" value="{{ addr }}">
+                            <input type="hidden" name="FN" id="FN" value="{{ gl.name }}">
+                            <button type="submit" style="color: blue">{{ gl.name }}</button>
+                        </form>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </form>
+            {% endif %}
+        </ul>
+        <hr />
+        <table border="0" width="600">
+            <th>
+                <form method='GET' class='post-form my-3' action="{% url 'pybo:github_createfile' project.id %}">
+                    {% csrf_token %}
+                    <input type="text" name="FN" id="FN">
+                    <input type="hidden" name="PATH" id="PATH" value="{{ addr }}">
+                    <button type='submit' class="button-55" role="button" formaction="{% url 'pybo:github_createfile' project.id %}">파일 수정 혹은 작성</button>
+                </form>
+            </th>
+            <br>
+            <th>
+                <a href="{% url 'pybo:detail' project.id %}" class="delete btn btn-sm btn-outline-secondary">뒤로 가기</a>
+            </th>
+        </table>
+    </div>
+</div>
+{% endblock %}

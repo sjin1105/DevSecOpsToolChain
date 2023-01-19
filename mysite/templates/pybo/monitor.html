@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<h2 style="border-radius: 50px 15px 50px 0; border-left: inset; margin-right: 85%; padding: 0.6em; background: #EBEEF0;">&nbsp&nbsp Monitoring</h2>
+<div class='container'>
+    <h3>Project Name &nbsp : {{ project.NAME }}</h3>
+    <br>
+    <h4><Strong>Pods</Strong></h4>
+    <div id="monitor0">
+        {% for pod_item in pod_list %}
+        <div id="monitor1">
+            <p><strong>Name : {{ pod_item.metadata.name }}</strong></p>
+            <br>
+            Create Time : {{ pod_item.metadata.creationTimestamp }}
+            <br>
+            Node : {{ pod_item.spec.nodeName }}
+            <br>
+            State : {{ pod_item.status.phase }}
+            <br>
+            {% for pod_kind in pod_item.metadata.ownerReferences %}
+                Deploy Controller : {{ pod_kind.kind }}
+            {% endfor %}
+            <!--POD RUNNING 상태-->
+            <br>
+            <br>
+            <ul>
+                <li>
+                    <p>POD Status</p>
+                    <div id="monitor2">
+                    {% for pod_status in pod_item.status.conditions %} 
+                        <div>
+                        {{ pod_status.type }} : {{ pod_status.status }}
+                        </div>
+                    {% endfor %}
+                    </div>
+                </li>
+                <br>
+                <li>
+                    <!--Container information-->
+                    <p>Containers</p>
+                    {% for pod_container in pod_item.spec.containers %}
+                        <div id="monitor3">
+                            <strong>Name : {{ pod_container.name }}</strong>
+                            <br>
+                            Image : {{ pod_container.image }}
+                            {% for pod_condition in pod_item.status.containerStatuses %}
+                                {% if pod_condition.name == pod_container.name %}
+                                    <br>
+                                    {% for key, value in pod_condition.state.items %}
+                                        State : {{ key }}
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                            <br>
+                            <br>
+                            <!--Conatiner Ports-->
+                            {% if pod_container.ports %}
+                                Ports Information
+                            {% endif %}
+                            {% for container_port in pod_container.ports %}
+                            <div id="monitor4">
+                                {% if container_port.name %}
+                                    {{ container_port.name }} : {{ container_port.containerPort }}/{{ container_port.protocol}}
+                                {% else %}
+                                    {{ container_port.containerPort }}/{{ container_port.protocol}}
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <br>
+                    {% endfor %}
+                </li>
+            </ul>
+        </div>
+        <br>
+        <br>
+        {% endfor %}
+    </div>
+    <br>
+    <br>
+    <h4><Strong>Services</Strong></h4>
+    <div id="monitor0">
+        {% for service_item in service_list %}
+        <div id="monitor5">
+            <p><strong>Name : {{ service_item.metadata.name }}</strong></p>
+            <br>
+            Create Time : {{ service_item.metadata.creationTimestamp }}
+            <br>
+            Service Type : {{ service_item.spec.type }}
+            {% if service_item.status.loadBalancer %}
+                {{ service_item.status.loadBalancer }}
+            {% endif %}
+            <br>
+            <br>
+            <!--Service Ports-->
+            <ul>
+                <li>
+                <p>Ports Conatiners</p>
+                {% for service_port in service_item.spec.ports %}
+                    <div id="monitor6">
+                        {% for key, value in service_port.items %}
+                            {{ key }} : {{ value }}
+                            <br>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+                </li>
+            </ul>
+        </div>
+        <br>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

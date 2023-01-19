@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<br><br>
+<div class='container'>
+    <h3 style="background: linear-gradient(to right, #A7A3FF,#FFA7A3, #671cc4, #5673bd); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">프로젝트 생성하기</h3>
+<ul class="list-group">
+    <form action="{% url 'pybo:project' %}" method='post' class='post-form my-3'>
+        {% csrf_token %}
+        {% include "form_errors.html" %}
+        <!-- 오류표시 End -->
+        <li class="list-group-item">
+            <div class="form-row">
+                <form method='post' class='post-form my-3' action="{% url 'pybo:project' %}">
+                    <h6>프로젝트 이름<i class="reqire"></h6>
+                    <input type="text" placeholder="Project Name" name="NAME" id="NAME" value="" maxlength="80"/>
+                    <select name="KIND" id='KIND'>
+                        <option value="0" disabled selected>종류</option>
+                        <option value="App">Application</option>
+                        <option value="Custom App">Custom App</option>
+                        <option value="GitHub App">GitHub App</option>
+                    </select>
+                    <br><br>
+                    <h6 id="GITTEXT" style="display: none;">프로젝트 GitHub<i class="reqire">*</i></h6>
+                    <input type="text" name="GIT" id="GIT" value="" style="display: none; width:500px;">
+                    <h6 id="TOKENNAME" style="display: none;">프로젝트 Git Token<i class="reqire">*</i></h6>
+                    <input type="text" name="GITTOKEN" id="GITTOKEN" value="" style="display: none; width:500px;">
+                    <input type="text" name="SONARTOKEN" id="SONARTOKEN" value="" style="display: none;">
+                    
+                    <div>
+                        <button type='submit' class="button btnPush btnLightBlue">생성하기</button>
+                    </div>
+                    <br><br><br>
+                </form>
+            </div>
+            <script>
+                window.onload = function ChangeValue(){
+                    $(document).ready(function() {
+                        $('#KIND').change(function() {
+                            var result = $(' #KIND option:selected').val();
+                            if (result == "Custom App") {
+                                $('#GIT').show();
+                                $('#GITTEXT').show();
+                                $('#TOKENNAME').hide();
+                                $('#GITTOKEN').hide();
+                            }
+                            else if (result == "GitHub App") {
+                                $('#GIT').hide();
+                                $('#GITTEXT').hide();
+                                $('#TOKENNAME').show();
+                                $('#GITTOKEN').show();
+                            }
+                            else {
+                                $('#GIT').hide();
+                                $('#GITTEXT').hide();
+                                $('#TOKENNAME').hide();
+                                $('#GITTOKEN').hide();
+                            }
+                            $("#KIND").submit()
+                        }); 
+                        }); 
+                }
+            </script>    
+        </li>
+</div>  
+{% endblock %}

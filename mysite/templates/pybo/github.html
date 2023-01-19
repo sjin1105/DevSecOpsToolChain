@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<table style="width: 100%;">
+    <th>
+        <h3 class="projecthead">&nbsp&nbsp GitHub Application</h3>
+    </th>
+    <th>
+        <form method='post' class='post-form my-3' action="{% url 'pybo:monitor_list' project.id %}">
+            {% csrf_token %}
+            <input type="hidden" name="PN" id="PN" value="{{ project.NAME }}"  maxlength="100">
+            <button type='submit' class='button-49' role="button" value="Monitor">Monitor</button>
+        </form>
+    </th>
+</table>
+<div class='container' style="margin-bottom: 100px;">
+    <h3><strong>Project Name : {{ project.NAME }}</strong></h3>
+    <br><br>    
+    <div>
+        {% csrf_token %}
+        <table>
+            <tr>
+                <th style="padding-left: 0px;">
+                    <img src="https://pbs.twimg.com/profile_images/1414990564408262661/r6YemvF9_400x400.jpg" style="width:200px; height:220px; display: block; margin-left: auto; margin-right: auto;">
+                    <p><strong>Git Hub</strong></p>
+                    <p>GitHub Repository 주소 : {{ project.GIT }}</p>
+                    <form method='get' class='post-form my-3' action="{% url 'pybo:github_listfile' project.id %}">
+                        {% csrf_token %}
+                        <p><strong>Edit Git Hub</strong></p>
+                        <button type="submit" class="button-55" role="button">Git Hub 설정하기</button>
+                    </form>
+                </th>
+                <th style="padding-left: 25px;">
+                    <img src="https://us.123rf.com/450wm/alexwhite/alexwhite1503/alexwhite150305065/38145435-%EC%99%BC%EC%AA%BD-%ED%99%94%EC%82%B4%ED%91%9C-%EB%85%B9%EC%83%89-%ED%8F%89%EB%A9%B4-%EC%95%84%EC%9D%B4%EC%BD%98-%ED%99%94%EC%82%B4%ED%91%9C-%EA%B8%B0%ED%98%B8.jpg?ver=6" 
+                        style="transform:rotate(180deg); width:75px; height:75px">
+                </th>
+                <th style="padding-left: 25px; position: relative;">
+                    <img src="{% static 'jenkins_image.png' %}" style="width:300px; height:220px; display: inline; margin-left: auto; margin-right: auto;">
+                    <p><strong>Jenkins</strong></p>
+                    <p>빌드할 GitHub Repository 주소 : {{ project.GIT }}</p>
+                    <form method='post' class='post-form my-3' action="{% url 'pybo:jenkins_api' %}">
+                        {% csrf_token %}
+                        <p><strong>Jenkins Build</strong></p>
+                        <input type="hidden" name="addr" id="addr" value="{{ project.GIT }}"  maxlength="100">
+                        <input type="hidden" name="KIND" id="KIND" value="{{ project.KIND }}"  maxlength="100">
+                        <input type="hidden" name="PN" id="PN" value="{{ project.NAME }}"  maxlength="100">
+                        <input type="hidden" name="PID" id="PID" value="{{ project.id }}"  maxlength="100">
+                        <button type="submit" class="button-55" role="button">빌드하기</button>
+                    </form>
+                    <br>
+                    <table>
+                        <tr>
+                            <td style="padding-bottom: 35px;">
+                                <a href='http://192.168.160.244:8080/job/{{ project.NAME }}/' class="button-89" role="button" target='_blank' style="text-decoration: none;">Jenkins Build 확인</a>
+                            </td>
+                        </tr>
+                        <tr>
+                           <td style="padding-bottom: 35px;">
+                                <a href='http://192.168.160.244:9000/dashboard?id={{ project.NAME }}/' class="button-89" role="button" target='_blank' style="text-decoration: none;">Sonarqube 확인</a>
+                            </td> 
+                        </tr>
+                        <tr>
+                            <td style="padding-bottom: 35px;">
+                                <a href='http://192.168.160.244:8080/blue/organizations/jenkins/{{ project.NAME }}/activity/' class="button-89" role="button" target='_blank' style="text-decoration: none;">Blue Ocean 확인</a>
+                            </td>
+                        </tr>
+                    </table>
+                </th>
+                <th style="padding-left: 25px; padding-top: 25px;">
+                    <img src="https://us.123rf.com/450wm/alexwhite/alexwhite1503/alexwhite150305065/38145435-%EC%99%BC%EC%AA%BD-%ED%99%94%EC%82%B4%ED%91%9C-%EB%85%B9%EC%83%89-%ED%8F%89%EB%A9%B4-%EC%95%84%EC%9D%B4%EC%BD%98-%ED%99%94%EC%82%B4%ED%91%9C-%EA%B8%B0%ED%98%B8.jpg?ver=6" 
+                        style="transform:rotate(180deg); width:75px; height:75px">
+                </th>
+                <th style="padding-left: 25px;">
+                    <img src="https://blog.kakaocdn.net/dn/skltp/btq8FeXAVbT/kvEk8k4Id91wQ938gq3CYk/img.png" style="width:250px; height:250px; display: block; margin-left: auto; margin-right: auto;">
+                    <div class="info">
+                        <p><strong>Argo CD Deploy</strong></p>
+                        <p>빌드할 GitHub Repository 주소 : {{ project.GIT }}</p>
+                        <form method='post' class='post-form my-3' action="{% url 'pybo:customapp' %}">
+                            {% csrf_token %}
+                            <p><strong>ArgoCD Deploy</strong></p>
+                            <input type="text" name="GIT" id="GIT" placeholder="YAML 파일 위치" value="">
+                            <input type="hidden" name="ADDR" id="ADDR" value="{{ project.GIT }}"  maxlength="100">
+                            <input type="hidden" name="PN" id="PN" value="{{ project.NAME }}"  maxlength="100">
+                            <input type="hidden" name="PID" id="PID" value="{{ project.id }}"  maxlength="100">
+                            <button type="submit" class="button-55" role="button">배포하기</button>
+                        </form>
+                    </div>
+                    
+                </th>
+            <tr>
+        </table>
+        <br><br><br><br><br>
+        <table border="0" width="400">
+            <!-- <th>
+                <a href="{% url 'pybo:jenkins_backup' %}" class="delete btn btn-sm btn-outline-secondary">젠킨스 레포지토리 초기화</a>
+            </th> -->
+            <th>
+                <a href="javascript:void(0)" style="color:red" class="delete btn btn-sm btn-outline-secondary" data-uri="{% url 'pybo:project_delete' project.id %}">프로젝트 삭제</a>
+            </th>
+        </table>
+        <script type='text/javascript'>
+            const delete_elements = document.getElementsByClassName("delete");
+            Array.from(delete_elements).forEach(function(element) {
+                element.addEventListener('click', function() {
+                    if(confirm("정말로 삭제하시겠습니까?")) {
+                        location.href = this.dataset.uri;
+                    };
+                });
+            });
+        </script>
+    </div>
+</div>
+{% endblock %}

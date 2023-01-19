@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load pybo_filter %}
+{% block content %}
+<div>
+    {% if state == '' %}
+    {% else %}
+    <script>
+        alert('{{ state }}')
+    </script>
+    {% endif %}
+</div>
+<div class="container my-3">
+    <h3 style="border-radius: 5em; padding: 0.5em; margin-right: 84%; background: #dcf1fb">프로젝트 목록</h3>
+    <table class="table">
+        <thead>
+        <tr class="table-dark">
+            <th>번호</th>
+            <th>프로젝트 이름</th>
+            <th>프로젝트 종류</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% if project %}
+        {% for pj in project %}
+        <tr>
+            <td style="background-color: #f3f1f1;">
+                <!-- 번호 = 전체건수 - 시작인덱스 - 현재인덱스 + 1 -->
+                {{ forloop.counter }}
+            </td>
+            <td>
+                <a href="{% url 'pybo:detail' pj.id %}" style="text-decoration: none;">{{ pj.NAME }}</a>
+            </td>
+            <td>{{ pj.KIND }}</td>
+        </tr>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr>
+            <td colspan="3">생성된 프로젝트가 없습니다.</td>
+        </tr>
+        {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
