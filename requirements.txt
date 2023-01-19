@@ -3,4 +3,6 @@ environs
 django-crontab
 mysqlclient
 gunicorn
-
+pymysql
+requests
+python-jenkins
