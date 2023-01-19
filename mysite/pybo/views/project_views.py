@@ -21,7 +21,7 @@ username = "admin" #jenkins username here
 password = "admin" # Jenkins user password / api token here
 server = jenkins.Jenkins(host, username=username, password=password)
 
-argo_host = "http://argocd.xyz/"
+argo_host = "http://10.108.239.122/"
 admin = "admin"
 request_url1 = """{}api/v1/session""".format(argo_host)
 data1 = {'username':'admin','password':'python3.10'}
