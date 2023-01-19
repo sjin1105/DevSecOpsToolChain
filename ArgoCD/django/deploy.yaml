@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-deploy
+  labels:
+    app: django-deploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: django-deploy
+  template:
+    metadata:
+      labels:
+        app: django-deploy
+    spec:
+      containers:
+      - name: django-deploy
+        image: sjin1105/django:5
+        ports:
+        - containerPort: 8000
+          protocol: TCP
+        resources:
+          requests:
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: / 
+            port: 8000
+        readinessProbe:
+          httpGet:
+            path: / 
+            port: 8000
