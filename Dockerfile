@@ -8,6 +8,8 @@ RUN pip3 install -r requirements.txt --no-cache-dir
 RUN apk del gcc musl-dev
 
 COPY ./mysite/ .
+COPY ./mysite.env /
+COPY ./mysite.service /etc/init.d/
 
 COPY shell.sh .
 RUN chmod +x shell.sh
