@@ -1,84 +1,27 @@
-
 node {
-  def app
-  def dockerfile
-  def anchorefile
-  def repotag
-
-  try {
-    stage('Checkout') {
-      // Clone the git repository
-      checkout scm
-      def path = sh returnStdout: true, script: "pwd"
-      path = path.trim()
-      dockerfile = path + "/Dockerfile"
-      anchorefile = path + "/anchore_images"
-    }
-
-    stage('Build') {
-      // Build the image and push it to a staging repository
-      app = docker.build("test/test", "--network host -f Dockerfile .")
-	    docker.withRegistry('https://192.168.160.244', 'harbor') {
-	app.push("$BUILD_NUMBER")
-	app.push("latest")
-      }
-      sh script: "echo Build completed"
-    }
-
-    stage('Parallel') {
-      parallel Test: {
-        app.inside {
-            sh 'echo "Dummy - tests passed"'
-        }
-      },
-      Analyze: {
-        writeFile file: anchorefile, \
-	      /*text: 'https://192.168.160.244'*/
-	      text: "192.168.160.244" +  "/" + "test/test" + " " + dockerfile
-        anchore name: anchorefile, \
-	      engineurl: 'http://192.168.160.244:8228/v1', \
-	      engineCredentialsId: 'admin', \
-	      annotations: [[key: 'added-by', value: 'jenkins']], \
-	      forceAnalyze: true
-      }
-    }
-  } finally {
-    stage('Cleanup') {
-      // Delete the docker image and clean up any allotted resources
-      sh script: "echo Clean up"
-    }
-  }
-     stage('OWASP Dependency-Check Vulnerabilities ') {
-        dependencyCheck additionalArguments: '''
-		-s "." 
-		-f "ALL"
-		-o "./report/"
-		--prettyPrint
-		--disableYarnAudit''', odcInstallation: 'OWASP Dependency-check'
-		dependencyCheckPublisher pattern: 'report/dependency-check-report.xml'
+     stage('Clone repository') {
+	 checkout scm
      }
-     stage('SonarQube analysis') {
-	    def scannerHome = tool 'sonarqube';
-            withSonarQubeEnv('sonarserver'){
-                    sh "${scannerHome}/bin/sonar-scanner \
-		-Dsonar.projectKey=sonarqube \
-		-Dsonar.host.url=http://192.168.160.244:9000 \
-		-Dsonar.login=807e0f2bc82e3c377436e2b6292ed7bc73b04e24 \
-		-Dsonar.sources=. \
-		-Dsonar.report.export.path=sonar-report.json \
-		-Dsonar.exclusions=report/* \
-		-Dsonar.dependencyCheck.jsonReportPath=./report/dependency-check-report.json \
-		-Dsonar.dependencyCheck.xmlReportPath=./report/dependency-check-report.xml \
-		-Dsonar.dependencyCheck.htmlReportPath=./report/dependency-check-report.html"
+     stage('Build image') {
+         app = docker.build("sjin1105/django", "--network host .")
+     }
+     stage('Push image') {
+         docker.withRegistry('https://registry.hub.docker.com', 'docker') {
+         app.push("$BUILD_NUMBER")
+	 app.push("latest")
          }
      }
-        stage('SonarQube Quality Gate'){
-    	 timeout(time: 1, unit: 'HOURS') {
-              def qg = waitForQualityGate()
-              if (qg.status != 'OK') {
-                  error "Pipeline aborted due to quality gate failure: ${qg.status}"
-              }
-          
-          }
+     stage('K8S Manifest Update') {
+         withCredentials([usernamePassword(credentialsId: 'git_key', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+
+			 sh('git config --global user.email "sjin110550@gmail.com"')
+			 sh('git config --global user.name "sjin110550"')
+			 sh('git checkout main')
+			 sh('git pull https://github.com/seungjin-1105/ParkingReservationProject-kubernetes.git')
+			 sh('sed -i "s|image: sjin1105/django.*|image: sjin1105/django:$BUILD_NUMBER|g" ./ArgoCD/django/django-deploy.yaml')
+			 sh('git add .')
+			 sh('git commit -m "$BUILD_NUMBER"')
+			 sh('git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/seungjin-1105/ParkingReservationProject-kubernetes.git')
+                    }
      }
 }
