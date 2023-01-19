@@ -13,7 +13,7 @@ import requests
 import json
 
 project_name = "project"
-argo_host = "http://argocd.xyz/"
+argo_host = "http://10.108.239.122/"
 request_url1 = """{}api/v1/session""".format(argo_host)
 data1 = {'username':'admin','password':'python3.10'}
 api_response = requests.post(request_url1, data=json.dumps(data1))
