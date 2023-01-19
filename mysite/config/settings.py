@@ -82,7 +82,7 @@ DATABASES = {
         'NAME': 'django',
         'USER' : 'admin',
         'PASSWORD' : 'dkagh1.',
-        'HOST' : '127.0.0.1',
+        'HOST' : 'mysql-cluster.mysql-cluster.svc.cluster.local',
         'PORT' : '3306',
     },
 }
