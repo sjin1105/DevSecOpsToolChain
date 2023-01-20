@@ -2,7 +2,7 @@ FROM python:3.9-slim
 WORKDIR /mysite/
 COPY requirements.txt .
 RUN apt update
-RUN apt install python-dev libmariadb-dev gcc -y
+RUN apt install python-dev libmariadb-dev gcc nginx -y
 RUN pip3 install -r requirements.txt --no-cache-dir
 
 COPY ./mysite/ .
