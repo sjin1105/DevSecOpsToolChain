@@ -4,7 +4,7 @@ COPY requirements.txt .
 RUN apt update
 RUN apt install python-dev libmariadb-dev gcc -y
 RUN pip3 install -r requirements.txt --no-cache-dir
-RUN apt remove gcc
+
 COPY ./mysite/ .
 COPY ./nginx-mysite /etc/nginx/sites-available/nginx-mysite
 RUN ln -s /etc/nginx/sites-available/nginx-mysite /etc/nginx/sites-enabled/nginx-mysite
