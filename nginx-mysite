@@ -1,5 +1,5 @@
 server {
-        listen 8000;
+        listen 6666;
         server_name django;
 
         location = /favicon.ico { access_log off; log_not_found off; }
