@@ -1,6 +1,6 @@
 #!/bin/bash
 
-
 python3 manage.py makemigrations
 python3 manage.py migrate
-python3 manage.py runserver 0.0.0.0:6000
+nginx start
+gunicorn --bind unix:/tmp/gunicorn.sock config.wsgi:application
