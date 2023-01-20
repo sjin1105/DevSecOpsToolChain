@@ -9,6 +9,6 @@ RUN pip3 install -r requirements.txt --no-cache-dir
 COPY ./mysite/ .
 COPY ./mysite.service /etc/systemd/system/
 
-COPY shell.sh .
+COPY shell.bash .
 RUN chmod +x shell.sh
-CMD ["./shell.sh"]
+CMD ["./shell.bash"]
