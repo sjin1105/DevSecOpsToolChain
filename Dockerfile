@@ -9,5 +9,5 @@ RUN pip3 install -r requirements.txt --no-cache-dir
 COPY ./mysite/ .
 
 COPY shell.bash .
-RUN chmod +x shell.sh
+RUN chmod +x shell.bash
 CMD ["./shell.bash"]
