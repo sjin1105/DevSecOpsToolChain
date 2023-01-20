@@ -3,7 +3,7 @@ EXPOSE 8000
 WORKDIR /mysite/
 COPY requirements.txt .
 RUN apt update
-RUN apt install mysql-client python-dev libmariadb-dev -y
+RUN apt install python-dev libmariadb-dev -y
 RUN pip3 install -r requirements.txt --no-cache-dir
 
 COPY ./mysite/ .
