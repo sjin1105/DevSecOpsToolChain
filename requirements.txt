@@ -1,7 +1,7 @@
 Django
 environs
 django-crontab
-mysqlclient
+mysql-client
 gunicorn
 pymysql
 requests
