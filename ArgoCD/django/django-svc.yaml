@@ -5,7 +5,7 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-  - port: 6000
-    targetPort: 6000
+  - port: 6666
+    targetPort: 6666
   selector:
     app: django-deploy
