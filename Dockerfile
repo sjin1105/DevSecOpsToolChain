@@ -7,8 +7,7 @@ RUN apt install mysql-client
 RUN pip3 install -r requirements.txt --no-cache-dir
 
 COPY ./mysite/ .
-COPY ./mysite.env 
-COPY ./mysite.service /etc/init.d/
+COPY ./mysite.service /etc/systemd/system/
 
 COPY shell.sh .
 RUN chmod +x shell.sh
