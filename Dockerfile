@@ -7,7 +7,7 @@ RUN pip3 install -r requirements.txt --no-cache-dir
 
 COPY ./mysite/ .
 COPY ./nginx-mysite /etc/nginx/sites-available/nginx-mysite
-RUN ln -s /etc/nginx/sites-available/nginx-mysite /etc/nginx/sites-enabled/nginx-mysite
+RUN ln -s /etc/nginx/sites-available/nginx-mysite /etc/nginx/sites-enabled/
 COPY shell.bash .
 RUN chmod +x shell.bash
 CMD ["./shell.bash"]
