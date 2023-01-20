@@ -193,7 +193,7 @@ def project_delete(request, project_id):
         api_response = requests.post(request_url, data=data, auth=user)
 
     # ArgoCD Project 삭제
-    argo_host = "http://argocd.xyz/"
+    argo_host = "http://10.108.239.122/"
     request_url = """{}api/v1/projects/{}""".format(argo_host, project.NAME)
     headers = {"Authorization": "Bearer {}".format(argocd_accesstoken)}
     api_response = requests.delete(request_url, headers=headers)
