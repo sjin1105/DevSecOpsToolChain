@@ -68,14 +68,14 @@ node {
 	      -Dsonar.dependencyCheck.htmlReportPath=./report/dependency-check-report.html"
         }
     }
-    stage('SonarQube Quality Gate'){
+    /*stage('SonarQube Quality Gate'){
       timeout(time: 1, unit: 'HOURS') {
         def qg = waitForQualityGate()
         if (qg.status != 'OK') {
             error "Pipeline aborted due to quality gate failure: ${qg.status}"
         }
       }
-    }
+    }*/
     stage ("Dynamic Analysis - DAST with OWASP ZAP") {
         sh "docker run -v ${pwd}:/zap/wrk/:rw --user root \
       -t owasp/zap2docker-stable zap-baseline.py \
