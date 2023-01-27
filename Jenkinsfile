@@ -89,7 +89,7 @@ node {
       // Delete the docker image and clean up any allotted resources
       sh script: "echo Clean up"
     	}
-     if('${currentBuild.result}.equals("FAILURE"){
+     if('${currentBuild.result}.equals("FAILURE")){
 	slackSend (channel: '#jenkins-notification', color: '#F01717', message: "FAILURE : '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
      }else{
 	slackSend (channel: '#jenkins-notification', color: '#00FF00', message: "${currentBuild.result} : Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
