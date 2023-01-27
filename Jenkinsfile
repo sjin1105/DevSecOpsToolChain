@@ -85,7 +85,7 @@ node {
       // Delete the docker image and clean up any allotted resources
       sh script: "echo Clean up"
     	}
-    slackSend (channel: '#jenkins-notification', message: "${currentBuild.result} : Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+    slackSend (channel: '#jenkins-notification', message: "${currentBuild.currentResult} : Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
     }
 	    
 }
