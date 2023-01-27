@@ -60,7 +60,6 @@ node {
 	      -Dsonar.sources=. \
 	      -Dsonar.report.export.path=sonar-report.json \
 	      -Dsonar.exclusions=report/* \
-	      -Dsonar.exclusions=mysite/* \
 	      -Dsonar.dependencyCheck.jsonReportPath=./report/dependency-check-report.json \
 	      -Dsonar.dependencyCheck.xmlReportPath=./report/dependency-check-report.xml \
 	      -Dsonar.dependencyCheck.htmlReportPath=./report/dependency-check-report.html"
@@ -82,14 +81,14 @@ node {
     } */ 	
 	  
   } catch (e) {
-  	slackSend (channel: '#jenkins', color: '#F01717', message: "FAILURE: '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})") 
+  	slackSend (channel: '#jenkins-notification', color: '#F01717', message: "FAILURE: '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})") 
 	error "Pipeline aborted due to quality gate failure: ${qg.status}"
   } finally {
     stage('Cleanup') {
       // Delete the docker image and clean up any allotted resources
       sh script: "echo Clean up"
     	}
-    slackSend (channel: '#jenkins', message: "${currentBuild.currentResult} : Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+    slackSend (channel: '#jenkins-notification', message: "${currentBuild.currentResult} : Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
     }
 	    
 }
