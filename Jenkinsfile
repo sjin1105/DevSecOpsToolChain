@@ -83,6 +83,7 @@ node {
 	  
   } catch (e) {
   	slackSend (channel: '#jenkins', color: '#F01717', message: "FAILURE: '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})") 
+	error "Pipeline aborted due to quality gate failure: ${qg.status}"
   } finally {
     stage('Cleanup') {
       // Delete the docker image and clean up any allotted resources
