@@ -82,12 +82,13 @@ node {
   } catch (e) {
 	echo "Exception=${e}"
 	//slackSend (channel: '#jenkins-notification', color: '#F01717', message: "FAILURE : '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
-        currentBuild.currentResult = 'FAILURE'
+        currentBuild.result = 'FAILURE'
+	throw e
   } finally {
     stage('Cleanup') {
       // Delete the docker image and clean up any allotted resources
       sh script: "echo Clean up"
     	}
-	slackSend (channel: '#jenkins-notification', color: '#00FF00', message: "${currentBuild.currentResult} : Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+	slackSend (channel: '#jenkins-notification', color: '#00FF00', message: "${currentBuild.result} : Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
     }
 }
