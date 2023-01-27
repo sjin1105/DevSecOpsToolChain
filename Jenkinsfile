@@ -23,13 +23,15 @@ node {
       sh script: "echo Build completed"
     }
 
-    stage('Anchore Image Analyze') {
+    stage('Parallel Test') {
       parallel Test: {
         app.inside {
           sh 'echo "Dummy - tests passed"'
         }
-      },
-      Analyze: {
+      }
+    }
+	  
+    stage('Anchore Image Scan') {
         writeFile file: anchorefile, text: "192.168.160.244/projects" + "/${JOB_NAME}" + ":${BUILD_NUMBER}" + " " + dockerfile
         anchore name: anchorefile, \
 	      engineurl: 'http://192.168.160.244:8228/v1', \
@@ -37,13 +39,7 @@ node {
 	      annotations: [[key: 'added-by', value: 'jenkins']], \
 	      forceAnalyze: true
       }
-    }
-  } finally {
-    stage('Cleanup') {
-      // Delete the docker image and clean up any allotted resources
-      sh script: "echo Clean up"
-    }
-    }
+	  
     stage('OWASP Dependency-Check Vulnerabilities ') {
     dependencyCheck additionalArguments: '''
 	    -s "." 
@@ -53,6 +49,7 @@ node {
 	    --disableYarnAudit''', odcInstallation: 'OWASP Dependency-check'
 	    dependencyCheckPublisher pattern: 'report/dependency-check-report.xml'
     }
+	  
     stage('SonarQube analysis') {
         def scannerHome = tool 'sonarqube';
         withSonarQubeEnv('sonarserver'){
@@ -81,5 +78,16 @@ node {
       -t owasp/zap2docker-stable zap-baseline.py \
 	  -t http://192.168.160.233/ \
       -c gen.conf -J report_json -r report_html -d"
-    } */ 		    
+    } */ 	
+	  
+  } catch (e) {
+  	slackSend (channel: '#jenkins', color: '#F01717', message: "FAILURE: '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})") 
+  } finally {
+    stage('Cleanup') {
+      // Delete the docker image and clean up any allotted resources
+      sh script: "echo Clean up"
+    	}
+    slackSend (channel: '#jenkins', message: "${currentBuild.currentResult} : Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+    }
+	    
 }
