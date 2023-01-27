@@ -59,7 +59,7 @@ node {
 	      -Dsonar.login=807e0f2bc82e3c377436e2b6292ed7bc73b04e24 \
 	      -Dsonar.sources=. \
 	      -Dsonar.report.export.path=sonar-report.json \
-	      -Dsonar.exclusions=*/** \
+	      -Dsonar.exclusions=report/* \
 	      -Dsonar.dependencyCheck.jsonReportPath=./report/dependency-check-report.json \
 	      -Dsonar.dependencyCheck.xmlReportPath=./report/dependency-check-report.xml \
 	      -Dsonar.dependencyCheck.htmlReportPath=./report/dependency-check-report.html"
@@ -79,13 +79,15 @@ node {
 	  -t http://192.168.160.233/ \
       -c gen.conf -J report_json -r report_html -d"
     } */ 	
-	  
+  } catch (e) {
+	cho "Exception=${e}"
+        currentBuild.result = 'FAILURE'
   } finally {
     stage('Cleanup') {
       // Delete the docker image and clean up any allotted resources
       sh script: "echo Clean up"
     	}
-    slackSend (channel: '#jenkins-notification', message: "${currentBuild.currentResult} : Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+    slackSend (channel: '#jenkins-notification', message: "${currentBuild.Result} : Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
     }
 	    
 }
