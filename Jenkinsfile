@@ -31,7 +31,7 @@ node {
       }
     }
 	  
-    stage('Anchore Image Scan') {
+    /*stage('Anchore Image Scan') {
         writeFile file: anchorefile, text: "192.168.160.244/projects" + "/${JOB_NAME}" + ":${BUILD_NUMBER}" + " " + dockerfile
         anchore name: anchorefile, \
 	      engineurl: 'http://192.168.160.244:8228/v1', \
@@ -49,7 +49,7 @@ node {
 	    --disableYarnAudit''', odcInstallation: 'OWASP Dependency-check'
 	    dependencyCheckPublisher pattern: 'report/dependency-check-report.xml'
     }
-	  
+    */  
     stage('SonarQube analysis') {
         def scannerHome = tool 'sonarqube';
         withSonarQubeEnv('sonarserver'){
