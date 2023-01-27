@@ -15,7 +15,7 @@ node {
 
     stage('Build') {
       // Build the image and push it to a staging repository
-      app = docker.build("$JOB_NAME", "--network host -f Dockerfile .")
+      app = docker.build("projects/$JOB_NAME", "--network host -f Dockerfile .")
 	  docker.withRegistry('https://192.168.160.244', 'harbor') {
 	    app.push("$BUILD_NUMBER")
 	    app.push("latest")
@@ -30,7 +30,7 @@ node {
         }
       },
       Analyze: {
-        writeFile file: anchorefile, text: "192.168.160.244/test/test" + ":${BUILD_NUMBER}" + " " + dockerfile
+        writeFile file: anchorefile, text: "192.168.160.244/projects" + "/${JOB_NAME}" + ":${BUILD_NUMBER}" + " " + dockerfile
         anchore name: anchorefile, \
 	      engineurl: 'http://192.168.160.244:8228/v1', \
 	      engineCredentialsId: 'admin', \
