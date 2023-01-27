@@ -81,7 +81,7 @@ node {
     } */ 	
   } catch (e) {
 	echo "Exception=${e}"
-	slackSend (channel: '#jenkins-notification', color: '#F01717', message: "FAILURE : '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+	//slackSend (channel: '#jenkins-notification', color: '#F01717', message: "FAILURE : '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
         currentBuild.currentResult = 'FAILURE'
   } finally {
     stage('Cleanup') {
