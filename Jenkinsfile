@@ -60,12 +60,13 @@ node {
 	      -Dsonar.sources=. \
 	      -Dsonar.report.export.path=sonar-report.json \
 	      -Dsonar.exclusions=report/* \
+	      -Dsonar.exclusions=mysite/* \
 	      -Dsonar.dependencyCheck.jsonReportPath=./report/dependency-check-report.json \
 	      -Dsonar.dependencyCheck.xmlReportPath=./report/dependency-check-report.xml \
 	      -Dsonar.dependencyCheck.htmlReportPath=./report/dependency-check-report.html"
         }
     }
-    /*stage('SonarQube Quality Gate'){
+    stage('SonarQube Quality Gate'){
       timeout(time: 1, unit: 'HOURS') {
         def qg = waitForQualityGate()
         if (qg.status != 'OK') {
@@ -73,7 +74,7 @@ node {
         }
       }
     }
-    stage ("Dynamic Analysis - DAST with OWASP ZAP") {
+    /* stage ("Dynamic Analysis - DAST with OWASP ZAP") {
         sh "docker run -v ${pwd}:/zap/wrk/:rw --user root \
       -t owasp/zap2docker-stable zap-baseline.py \
 	  -t http://192.168.160.233/ \
