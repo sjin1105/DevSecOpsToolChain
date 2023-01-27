@@ -75,11 +75,11 @@ node {
             error "Pipeline aborted due to quality gate failure: ${qg.status}"
         }
       }
-    }*/
+    }
     stage ("Dynamic Analysis - DAST with OWASP ZAP") {
         sh "docker run -v ${pwd}:/zap/wrk/:rw --user root \
       -t owasp/zap2docker-stable zap-baseline.py \
 	  -t http://192.168.160.233/ \
       -c gen.conf -J report_json -r report_html -d"
-    } 		    
+    } */ 		    
 }
