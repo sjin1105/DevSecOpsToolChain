@@ -59,7 +59,7 @@ node {
 	      -Dsonar.login=807e0f2bc82e3c377436e2b6292ed7bc73b04e24 \
 	      -Dsonar.sources=. \
 	      -Dsonar.report.export.path=sonar-report.json \
-	      -Dsonar.exclusions=*/** \
+	      -Dsonar.exclusions=report/* \
 	      -Dsonar.dependencyCheck.jsonReportPath=./report/dependency-check-report.json \
 	      -Dsonar.dependencyCheck.xmlReportPath=./report/dependency-check-report.xml \
 	      -Dsonar.dependencyCheck.htmlReportPath=./report/dependency-check-report.html"
