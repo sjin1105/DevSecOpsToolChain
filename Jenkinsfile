@@ -72,6 +72,7 @@ node {
             error "Pipeline aborted due to quality gate failure: ${qg.status}"
         }else{
 	currentBuild.result = 'SUCCESS'
+      	}
       }
     }
     /* stage ("Dynamic Analysis - DAST with OWASP ZAP") {
