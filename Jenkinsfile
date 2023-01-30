@@ -92,7 +92,7 @@ node {
     	}	
      echo currentBuild.result
      if(currentBuild.result.equals("SUCCESS")){
-	slackSend (channel: '#jenkins-notification', color: '#00FF00', message: "빌드 성공 : Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})", iconEmoji: 'white_check_mark')
+	slackSend (channel: '#jenkins-notification', color: '#00FF00', message: "빌드 성공 : Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})", botUser : 'True', iconEmoji: 'white_check_mark')
      }else{
 	slackSend (channel: '#jenkins-notification', color: '#F01717', message: "빌드 실패 : Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
      }
