@@ -89,8 +89,9 @@ node {
       sh script: "echo Clean up"
     	}
 	//slackSend (channel: '#jenkins-notification', message: "${currentBuild.result} : Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")	
-	
-     if('${currentBuild.result}'.equals("null")){
+     def result = '${currentBuild.result}'.toString()	
+		
+     if(result.equals("null")){
 	slackSend (channel: '#jenkins-notification', color: '#00FF00', message: "SUCESS : '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
      }else{
 	slackSend (channel: '#jenkins-notification', color: '#F01717', message: "${currentBuild.result} : Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
