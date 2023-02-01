@@ -3,8 +3,8 @@ node {
   def dockerfile
   def anchorefile
 	
-  tr {
-    st('Checkout') {
+  try {
+    stage('Checkout') {
       // Clone the git repository
       checkout scm
       def path = sh returnStdout: true, script: "pwd"
