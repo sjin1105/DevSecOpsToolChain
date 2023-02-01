@@ -3,7 +3,7 @@ node {
   def dockerfile
   def anchorefile
 	
-  try {
+  tr {
     stage('Checkout') {
       // Clone the git repository
       checkout scm
