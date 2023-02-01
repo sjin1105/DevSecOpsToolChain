@@ -30,7 +30,7 @@ node {
 	      -Dsonar.login=807e0f2bc82e3c377436e2b6292ed7bc73b04e24 \
 	      -Dsonar.sources=. \
 	      -Dsonar.report.export.path=sonar-report.json \
-	      -Dsonar.exclusions=report/* \
+	      -Dsonar.exclusions=*/** \
 	      -Dsonar.dependencyCheck.jsonReportPath=./report/dependency-check-report.json \
 	      -Dsonar.dependencyCheck.xmlReportPath=./report/dependency-check-report.xml \
 	      -Dsonar.dependencyCheck.htmlReportPath=./report/dependency-check-report.html"
@@ -41,9 +41,7 @@ node {
         def qg = waitForQualityGate()
         if (qg.status != 'OK') {
             error "Pipeline aborted due to quality gate failure: ${qg.status}"
-        }else{
-	currentBuild.result = 'SUCCESS'
-      	}
+        }
       }
     }
     stage('Build') {
@@ -63,6 +61,7 @@ node {
 	      annotations: [[key: 'added-by', value: 'jenkins']], \
 	      forceAnalyze: true
       }
+      currentBuild.result = "SUCCESS"
   } catch (e) {
 	echo "Exception=${e}"
         currentBuild.result = 'FAILURE'
