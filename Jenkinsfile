@@ -4,7 +4,7 @@ node {
   def anchorefile
 	
   tr {
-    stage('Checkout') {
+    st('Checkout') {
       // Clone the git repository
       checkout scm
       def path = sh returnStdout: true, script: "pwd"
