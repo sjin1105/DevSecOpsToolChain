@@ -12,34 +12,6 @@ node {
       dockerfile = path + "/Dockerfile"
       anchorefile = path + "/anchore_images"
     }
-
-    stage('Build') {
-      // Build the image and push it to a staging repository
-      app = docker.build("projects/$JOB_NAME", "--network host -f Dockerfile .")
-	  docker.withRegistry('https://192.168.160.244', 'harbor') {
-	    app.push("$BUILD_NUMBER")
-	    app.push("latest")
-      }
-      sh script: "echo Build completed"
-    }
-
-    stage('Parallel Test') {
-      parallel Test: {
-        app.inside {
-          sh 'echo "Dummy - tests passed"'
-        }
-      }
-    }
-	  
-    /*stage('Anchore Image Scan') {
-        writeFile file: anchorefile, text: "192.168.160.244/projects" + "/${JOB_NAME}" + ":${BUILD_NUMBER}" + " " + dockerfile
-        anchore name: anchorefile, \
-	      engineurl: 'http://192.168.160.244:8228/v1', \
-	      engineCredentialsId: 'admin', \
-	      annotations: [[key: 'added-by', value: 'jenkins']], \
-	      forceAnalyze: true
-      }
-	  
     stage('OWASP Dependency-Check Vulnerabilities ') {
     dependencyCheck additionalArguments: '''
 	    -s "." 
@@ -49,7 +21,6 @@ node {
 	    --disableYarnAudit''', odcInstallation: 'OWASP Dependency-check'
 	    dependencyCheckPublisher pattern: 'report/dependency-check-report.xml'
     }
-    */  
     stage('SonarQube analysis') {
         def scannerHome = tool 'sonarqube';
         withSonarQubeEnv('sonarserver'){
@@ -75,22 +46,34 @@ node {
       	}
       }
     }
-    /* stage ("Dynamic Analysis - DAST with OWASP ZAP") {
-        sh "docker run -v ${pwd}:/zap/wrk/:rw --user root \
-      -t owasp/zap2docker-stable zap-baseline.py \
-	  -t http://192.168.160.233/ \
-      -c gen.conf -J report_json -r report_html -d"
-    } */ 	
+    stage('Build') {
+      // Build the image and push it to a staging repository
+      app = docker.build("projects/$JOB_NAME", "--network host -f Dockerfile .")
+	  docker.withRegistry('https://192.168.160.244', 'harbor') {
+	    app.push("$BUILD_NUMBER")
+	    app.push("latest")
+      }
+      sh script: "echo Build completed"
+    }
+    stage('Anchore Image Scan') {
+        writeFile file: anchorefile, text: "192.168.160.244/projects" + "/${JOB_NAME}" + ":${BUILD_NUMBER}" + " " + dockerfile
+        anchore name: anchorefile, \
+	      engineurl: 'http://192.168.160.244:8228/v1', \
+	      engineCredentialsId: 'admin', \
+	      annotations: [[key: 'added-by', value: 'jenkins']], \
+	      forceAnalyze: true
+      }
   } catch (e) {
 	echo "Exception=${e}"
         currentBuild.result = 'FAILURE'
 	throw e
   } finally {
     stage('Cleanup') {
-      // Delete the docker image and clean up any allotted resources
+      // Delete Docker Image
       sh script: "echo Clean up"
     	}	
      echo currentBuild.result
+     // send slack notification
      if(currentBuild.result.equals("SUCCESS")){
 	slackSend (channel: '#jenkins-notification', color: '#00FF00', message: "빌드 성공 : Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
      }else{
