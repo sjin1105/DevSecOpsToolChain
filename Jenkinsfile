@@ -68,7 +68,6 @@ node {
 	throw e
   } finally {
     stage('Cleanup') {
-      // Delete Docker Image
       sh script: "echo Clean up"
     	}	
      echo currentBuild.result
@@ -76,7 +75,7 @@ node {
      if(currentBuild.result.equals("SUCCESS")){
 	slackSend (channel: '#jenkins-notification', color: '#00FF00', message: "빌드 성공 : Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
      }else{
-	slackSend (channel: '#jenkins-notification', color: '#F01717', message: "빌드 실패 : Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+	slackSend (channel: '#jenkins-notification', color: '#F01717', message: "빌드 실패 : Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' error message : '${e}' (${env.BUILD_URL})")
      }
    }
 }
