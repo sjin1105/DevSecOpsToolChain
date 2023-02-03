@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: django-deploy
-        image: 192.168.160.244/projects/django:latest
+        image: sjin1105/django:5
         ports:
         - containerPort: 6666
           protocol: TCP
