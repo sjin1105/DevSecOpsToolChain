@@ -9,6 +9,8 @@ spec:
   selector:
     matchLabels:
       app: django-deploy
+  imagePullSecrets:
+  - name: harbor
   template:
     metadata:
       labels:
