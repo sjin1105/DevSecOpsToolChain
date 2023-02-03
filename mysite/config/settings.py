@@ -78,12 +78,12 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'django',
-        'USER' : 'root',
-        'PASSWORD' : 'python3.10',
-        'HOST' : '10.107.233.211',
-        'PORT' : '3306',
+        'USER' : 'django',
+        'PASSWORD' : 'django',
+        'HOST' : 'hippo-ha.postgres-operator',
+        'PORT' : '5432',
     },
 }
 
