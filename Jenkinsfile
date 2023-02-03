@@ -47,7 +47,7 @@
     stage('Build') {
       // Build the image and push it to a staging repository
       app = docker.build("projects/$JOB_NAME", "--network host -f Dockerfile .")
-	  docker.withRegistry('https://192.168.160.244', 'harbor') {
+	  docker.withRegistry('https://registry.hub.docker.com', 'docker') {
 	    app.push("$BUILD_NUMBER")
 	    app.push("latest")
       }
