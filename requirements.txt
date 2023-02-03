@@ -1,8 +1,7 @@
 Django
 environs
 django-crontab
-mysqlclient
 gunicorn
-pymysql
 requests
 python-jenkins
+psycopg2-binary
