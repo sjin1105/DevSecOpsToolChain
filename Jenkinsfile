@@ -46,7 +46,7 @@
     }
     stage('Build') {
       // Build the image and push it to a staging repository
-      app = docker.build("projects/$JOB_NAME", "--network host -f Dockerfile .")
+      app = docker.build("sjin1105/$JOB_NAME", "--network host -f Dockerfile .")
 	  docker.withRegistry('https://registry.hub.docker.com', 'docker') {
 	    app.push("$BUILD_NUMBER")
 	    app.push("latest")
