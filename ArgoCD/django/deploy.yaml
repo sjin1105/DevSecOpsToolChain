@@ -9,8 +9,6 @@ spec:
   selector:
     matchLabels:
       app: django-deploy
-  imagePullSecrets:
-  - name: harbor
   template:
     metadata:
       labels:
@@ -22,3 +20,5 @@ spec:
         ports:
         - containerPort: 6666
           protocol: TCP
+      imagePullSecrets:
+      - name: harbor
