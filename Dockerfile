@@ -11,4 +11,3 @@ RUN ln -s /etc/nginx/sites-available/nginx-mysite /etc/nginx/sites-enabled/
 RUN rm /etc/nginx/sites-enabled/default
 COPY shell.bash .
 RUN chmod +x shell.bash
-CMD ["./shell.bash"]
