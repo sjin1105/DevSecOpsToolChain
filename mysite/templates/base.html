@@ -9,11 +9,19 @@
     <link rel="stylesheet" type="text/css" href="{% static 'bootstrap.min.css' %}">
     <!-- pybo CSS -->
     <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+    <!-- favicon -->
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon_io/favicon.ico' %}"/>
+
+    <script>src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"</script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <title>Auto K8s</title>
 </head>
 <body>
 {% include "navbar.html" %}
 <!-- 기본 템플릿 안에 삽입될 내용 Start -->
+<div>
+    <br><br><br>
+</div>
 {% block content %}
 {% endblock %}
 <!-- 기본 템플릿 안에 삽입될 내용 End -->

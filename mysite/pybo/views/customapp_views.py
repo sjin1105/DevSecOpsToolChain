@@ -1,40 +1,26 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse
-from ..models import Project
-from django.utils import timezone
-from django.http import HttpResponseNotAllowed
-from ..forms import ProjectForm
-from django.core.paginator import Paginator
-from django.contrib.auth.decorators import login_required
-import pymysql
-from time import sleep
+from ..models import Project, Jenkins, ArgoCD
 import jenkins
 import requests
 import json
+from django.http import JsonResponse
+from datetime import datetime, timedelta
 
-host = "http://192.168.160.244:8080"
-username = "admin" #jenkins username here
-password = "admin" # Jenkins user password / api token here
+host = Jenkins.objects.values()[0]['HOST']
+username = Jenkins.objects.values()[0]['USER'] #jenkins username here
+password = Jenkins.objects.values()[0]['PASSWORD'] # Jenkins user password / api token here
 server = jenkins.Jenkins(host, username=username, password=password)
 
 project_name = "project"
-argo_host = "http://10.108.239.122/"
+argo_host = ArgoCD.objects.values()[0]['HOST']
 request_url1 = """{}api/v1/session""".format(argo_host)
-data1 = {'username':'admin','password':'python3.10'}
+data1 = {'username':ArgoCD.objects.values()[0]['USER'],'password':ArgoCD.objects.values()[0]['PASSWORD']}
 api_response = requests.post(request_url1, data=json.dumps(data1))
 argocd_accesstoken = api_response.json()['token']
 
-def jenkins_api(request):
+def jenkins_api(request, project_id):
     addr = request.POST['addr']
-    pj = Project.objects.values()
-    flag = 0
-    for i in range(0, len(pj)):
-        if pj[i]['id'] == int(request.POST['PID']):
-            project = pj[i]
-            flag = 1
-            break
-    if flag == 0:
-        print("Project doesn't exist")
+    project = get_object_or_404(Project, pk=project_id)
     
     myConfig = server.get_job_config(request.POST['PN'])
     # github 주소가 등록되어 있지 않으면
@@ -57,6 +43,18 @@ def jenkins_api(request):
         return render(request, 'pybo/github.html', context)
     else:
         return render(request, 'pybo/custom.html', context)
+
+def jenkins_build_info(request):
+
+    url = "http://192.168.160.244:8080//job/%s/lastBuild/wfapi" %(request.GET['PN'])
+    headers = {'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+
+    response = requests.get(url, headers=headers, auth=(username, password))
+    data = response.json()
+    unix_timestamp = int(data['startTimeMillis'])
+    k = datetime.utcfromtimestamp(unix_timestamp / 1000) + timedelta(hours=9)
+    context = {'info' : data['name'], 'time' : k, 'stages' : data['stages'], 'result' : data['status']}
+    return JsonResponse(context)
 
 def jenkins_backup(request):
     init = open('./init_conf', 'r')
@@ -90,6 +88,8 @@ def customapp(request):
             break
     if flag == 0:
         print("Project doesn't exist")
+        context = {'project': project, 'state' : '오류'}
+        return render(request, 'pybo/mainpage.html', context)
 
     response = False
     GitURL = f"{request.POST['ADDR']}"
@@ -118,7 +118,7 @@ def customapp(request):
             "project": f"{request.POST['PN']}",
             "syncPolicy": {
                 "automated": {},
-                "syncOptions": ["CreateNamespace=true", "ApplyOutOfSyncOnly=true"]
+                "syncOptions": ["CreateNamespace=true"]
             }
         }
     }
@@ -136,5 +136,8 @@ def customapp(request):
 
     except Exception as e:
         print("[332] create argocd application is failed: {}".format(e))
-    finally:
+    print(project)
+    if request.POST['KIND'] == 'GitHub App':
+        return render(request, 'pybo/github.html', context)
+    else:
         return render(request, 'pybo/custom.html', context)

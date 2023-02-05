@@ -14,7 +14,7 @@
         <h3 class="projecthead">&nbsp&nbspCreate Normal Application</h3>
     </th>
     <th>
-        <form method='post' class='post-form my-3' action="{% url 'pybo:monitor_list' project.id %}">
+        <form method='post' class='post-form my-3' action="{% url 'pybo:monitor' project.id %}">
             {% csrf_token %}
             <input type="hidden" name="PN" id="PN" value="{{ project.NAME }}"  maxlength="100">
             <button type='submit' class='button-49' role="button" value="Monitor">Monitor</button>
@@ -27,7 +27,7 @@
 <div id="appcreate0">
     <br>
     <div style="margin-left: 24%; margin-right: 17%;">
-        <img src="{% static 'was.png' %}" style="width:220px; height:220px;">
+        <img draggable="false" src="{% static 'was.png' %}" style="width:220px; height:220px;">
         <br><br>
         <h4>웹 애플리케이션</h4>
         <form method='post' class='post-form my-3' action="{% url 'pybo:webapp' %}">
@@ -52,7 +52,7 @@
     </div>
     <br>
     <div>
-        <img src="{% static 'db.png' %}" style="margin-left: 10px; width:160px; height:220px;">
+        <img draggable="false" src="{% static 'db.png' %}" style="margin-left: 10px; width:160px; height:220px;">
         <br><br>
         <h4>DB 애플리케이션</h4>
         <form method='post' class='post-form my-3' action="{% url 'pybo:dbapp' %}">
@@ -81,7 +81,7 @@
     </div>
 </div>
 <hr width="75%" style="margin-left: 14%">
-<a href="javascript:void(0)" style="color:red; margin-left: 14%;" class="delete btn btn-sm btn-outline-secondary" data-uri="{% url 'pybo:project_delete' project.id %}">프로젝트 삭제</a>
+<a draggable="false" href="javascript:void(0)" style="color:red; margin-left: 14%;" class="delete btn btn-sm btn-outline-secondary" data-uri="{% url 'pybo:project_delete' project.id %}">프로젝트 삭제</a>
 <script type='text/javascript'>
     const delete_elements = document.getElementsByClassName("delete");
     Array.from(delete_elements).forEach(function(element) {

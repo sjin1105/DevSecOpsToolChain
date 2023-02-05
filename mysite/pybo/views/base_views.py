@@ -1,17 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse
 from ..models import Project
-from django.utils import timezone
-from django.http import HttpResponseNotAllowed
-from ..forms import ProjectForm
-from django.core.paginator import Paginator
-from django.contrib.auth.decorators import login_required
-import pymysql
-from time import sleep
-import jenkins
-import requests
-import json
-
 
 def index(request):
     project = Project.objects.all()

@@ -1,21 +1,12 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse
-from ..models import Project
-from django.utils import timezone
-from django.http import HttpResponseNotAllowed
-from ..forms import ProjectForm
-from django.core.paginator import Paginator
-from django.contrib.auth.decorators import login_required
-import pymysql
-from time import sleep
-import jenkins
+from ..models import Project, ArgoCD
 import requests
 import json
 
 project_name = "project"
-argo_host = "http://10.108.239.122/"
+argo_host = ArgoCD.objects.values()[0]['HOST']
 request_url1 = """{}api/v1/session""".format(argo_host)
-data1 = {'username':'admin','password':'python3.10'}
+data1 = {'username':ArgoCD.objects.values()[0]['USER'],'password':ArgoCD.objects.values()[0]['PASSWORD']}
 api_response = requests.post(request_url1, data=json.dumps(data1))
 argocd_accesstoken = api_response.json()['token']
 
@@ -111,8 +102,6 @@ def webapp(request):
     else:
         context = {'project' : project, 'state' : 'None'}
     return render(request, 'pybo/appcreate.html', context)
-
-    
 
 
 def dbapp(request):

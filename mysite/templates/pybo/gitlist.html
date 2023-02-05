@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 {% load static %}
-<h2 class="my-3 border-bottom pb2">&nbsp&nbsp GitHub Application</h2>
+<h2 class="projecthead">&nbsp&nbsp GitHub Application</h2>
 <div>
     {% if state == '' %}
     {% else %}
@@ -10,6 +10,7 @@
     </script>
     {% endif %}
 </div>
+<br>
 <div class='container'>
     <h3><strong>Name &nbsp : {{ project.NAME }}</strong></h3>
     <div>
@@ -21,6 +22,12 @@
                 <form method='post' class='post-form my-3' action="{% url 'pybo:create_jenkins' project.id %}">
                     {% csrf_token %}
                     <button type='submit' class="button-55" role="button" value="Jenkins">기본 Jenkins 작성</button>
+                </form>
+                <form method='post' class='post-form my-3' enctype="multipart/form-data" action="{% url 'pybo:github_fileupload' project.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="PATH" id="PATH" value="{{ addr }}">
+                    <input type="file" class="" name="file" id="file" style="border: 1px solid;">
+                    <button type='submit' class="button-55" role="button" value="Jenkins">File Upload</button>
                 </form>
             <hr />
             {% if addr != '/' %}
@@ -47,7 +54,7 @@
                     </td>
                     {% elif gl.type == 'file' %}
                     <td>
-                        <form method='GET' class='post-form my-3' action="{% url 'pybo:github_createfile' project.id %}">
+                        <form method='post' class='post-form my-3' action="{% url 'pybo:github_createfile' project.id %}">
                             {% csrf_token %}
                             <img src="{%static 'file.png' %}" width="30px" height="30px">
                             <input type="hidden" name="PATH" id="PATH" value="{{ addr }}">
@@ -71,11 +78,8 @@
                     <button type='submit' class="button-55" role="button" formaction="{% url 'pybo:github_createfile' project.id %}">파일 수정 혹은 작성</button>
                 </form>
             </th>
-            <br>
-            <th>
-                <a href="{% url 'pybo:detail' project.id %}" class="delete btn btn-sm btn-outline-secondary">뒤로 가기</a>
-            </th>
         </table>
+        <a href="{% url 'pybo:detail' project.id %}" class="delete btn btn-sm btn-outline-secondary" style="width:150px; height:40px; display: flex; justify-content: center; text-align: center;">뒤로 가기</a>
     </div>
 </div>
 {% endblock %}

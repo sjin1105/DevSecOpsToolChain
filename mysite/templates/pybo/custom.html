@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
 {% block content %}
 {% load static %}
+
 <table style="width: 100%;">
     <th>
-    <h3 class="projecthead">&nbsp&nbsp Custom Application</h3>
+        <h3 class="projecthead">&nbsp&nbsp Custom Application</h3>
     </th>
     <th>
-        <form method='post' class='post-form my-3' action="{% url 'pybo:monitor_list' project.id %}">
+        <form method='post' class='post-form my-3' action="{% url 'pybo:monitor' project.id %}">
             {% csrf_token %}
             <input type="hidden" name="PN" id="PN" value="{{ project.NAME }}"  maxlength="100">
             <button type='submit' class='button-49' role="button" value="Monitor">Monitor</button>
@@ -31,12 +32,12 @@
         <table>
             <tr>
                 <th style="padding-left: 150px;">
-                    <img src="{% static 'jenkins_image.png' %}" style="width:300px; height:220px;">
-                    <form method='post' class='post-form my-3' action="{% url 'pybo:jenkins_api' %}">
+                    <img draggable="false" src="{% static 'jenkins_image.png' %}" style="width:300px; height:220px;">
+                    <form method='post' class='post-form my-3' action="{% url 'pybo:jenkins_api' project.id %}">
                         {% csrf_token %}
                         <p><strong>Jenkins Build</strong></p>
                         <p>빌드할 GitHub Repository 주소</p>
-                        <p id="gitbox0"><u>{{ project.GIT }}</u></p>
+                        <a href="{{ project.GIT }}" id="gitbox0"><u>{{ project.GIT }}</u></a>
                         <input type="hidden" name="addr" id="addr" value="{{ project.GIT }}"  maxlength="100">
                         <input type="hidden" name="PN" id="PN" value="{{ project.NAME }}"  maxlength="100">
                         <input type="hidden" name="KIND" id="KIND" value="{{ project.KIND }}"  maxlength="100">
@@ -44,26 +45,42 @@
                         <button type="submit" class="button-55" role="button">빌드하기</button>
                     </form>
                     <br>
-                    <a href='http://192.168.160.244:8080/job/{{ project.NAME }}/' class="button-89" role="button" target='_blank' style="text-decoration: none;">
-                        Jenkins Build 확인
-                    </a>
+                    <div>
+                        <table>
+                            <td>
+                                <a href="#" draggable="false" class="button-89" role="button" onclick="timer()">빌드 확인</a>
+                            </td>
+                            <td>
+                                <a draggable="false" href='http://192.168.160.244:8080/job/{{ project.NAME }}/' class="button-89" role="button" target='_blank' style="text-decoration: none;">
+                                    Jenkins 페이지 이동
+                                </a>
+                            </td>
+                        </table>
+                        <br>
+                        <br>
+                        <div id="data-box"></div>
+                        <div id="spinner-box" class="text-center mt-5" style="display: none;">
+                            <div class="spinner-border text-primary" role="status"></div>
+                        </div>
+                    </div>
+                        <div class="info"></div>
+                        <div class="stages"></div>
+                        <div class="result"></div>
                 </th>
                 <th style="padding-left: 70px;">
-                    <img src="https://us.123rf.com/450wm/alexwhite/alexwhite1503/alexwhite150305065/38145435-%EC%99%BC%EC%AA%BD-%ED%99%94%EC%82%B4%ED%91%9C-%EB%85%B9%EC%83%89-%ED%8F%89%EB%A9%B4-%EC%95%84%EC%9D%B4%EC%BD%98-%ED%99%94%EC%82%B4%ED%91%9C-%EA%B8%B0%ED%98%B8.jpg?ver=6" 
+                    <img draggable="false" src="https://us.123rf.com/450wm/alexwhite/alexwhite1503/alexwhite150305065/38145435-%EC%99%BC%EC%AA%BD-%ED%99%94%EC%82%B4%ED%91%9C-%EB%85%B9%EC%83%89-%ED%8F%89%EB%A9%B4-%EC%95%84%EC%9D%B4%EC%BD%98-%ED%99%94%EC%82%B4%ED%91%9C-%EA%B8%B0%ED%98%B8.jpg?ver=6" 
                         style="transform:rotate(180deg); width:75px; height:75px;">
                 </th>
                 <th style="padding-left: 100px;">
-                    <img src="https://blog.kakaocdn.net/dn/skltp/btq8FeXAVbT/kvEk8k4Id91wQ938gq3CYk/img.png" style="width:300px; height:250px;">
+                    <img draggable="false" src="https://blog.kakaocdn.net/dn/skltp/btq8FeXAVbT/kvEk8k4Id91wQ938gq3CYk/img.png" style="width:300px; height:250px;">
                     <form method='post' class='post-form my-3' action="{% url 'pybo:customapp' %}">
                     {% csrf_token %}
                     <p><strong>Argo CD Deploy</strong></p>
-                    <p>빌드할 GitHub Repository 주소</p>
-                    <p id="gitbox0"><u>{{ project.GIT }}</u></p>
-                    <P>Argo CD Repository</P>
-                    <input type="text" name="GIT" id="GIT" placeholder="ArgoCD Repository" value="">
+                    <input type="text" name="GIT" id="GIT" placeholder="Argo CD Repository" value="">
                     <input type="hidden" name="ADDR" id="ADDR" value="{{ project.GIT }}"  maxlength="100">
                     <input type="hidden" name="PN" id="PN" value="{{ project.NAME }}"  maxlength="100">
                     <input type="hidden" name="PID" id="PID" value="{{ project.id }}"  maxlength="100">
+                    <input type="hidden" name="KIND" id="KIND" value="{{ project.KIND }}"  maxlength="100">
                     <button type="submit" class="button-55" role="button">배포하기</button>
                     </form>
                 </th>
@@ -71,11 +88,8 @@
         </table>
         <br><br><br>
         <table width="400">
-            <!-- <th>
-                <a href="{% url 'pybo:jenkins_backup' %}" class="delete btn btn-sm btn-outline-secondary">젠킨스 레포지토리 초기화</a>
-            </th> -->
             <th>
-                <a href="javascript:void(0)" style="color:red" class="delete btn btn-sm btn-outline-secondary" data-uri="{% url 'pybo:project_delete' project.id %}">프로젝트 삭제</a>
+                <a draggable="false" href="javascript:void(0)" style="color:red" class="delete btn btn-sm btn-outline-secondary" data-uri="{% url 'pybo:project_delete' project.id %}">프로젝트 삭제</a>
             </th>
         </table>
         
@@ -88,6 +102,65 @@
                     };
                 });
             });
+        </script>
+        <script>
+            function set_stage() {
+                const pname = $('input[name="PN"]').val();
+                const spinnerBox = document.getElementById('spinner-box')
+                const dataBox = document.getElementById('data-box')
+                spinnerBox.style.display = ''
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'pybo:jenkins_build_info' %}",
+                    data: {'PN': pname},
+                    success: function(response){   
+                        console.log(response)
+                        let ktime = response.time.replace(/T/, ' ')
+                        const number = '<p>Build Number : ' + response.info + '<p>';
+                        const time = '<p>' + ktime + '<p>';
+                        $(".info").html(number + time); 
+                        var stages = '';
+                        stages = stages.concat('<table>')
+                        for (var i in response.stages)
+                        {   
+                            if (response.stages[i].status == 'SUCCESS')
+                            {
+                                stage = '<td><button style="background-color: lightgreen; width:100px; height:80px; overflow:auto;">' + response.stages[i].name + '</button></td>' + ' '
+                                stages = stages.concat(stage)
+                            }
+                            else
+                            {
+                                stage = '<td><button style="background-color: red;">' + response.stages[i].name + '</button></td>' + ' '
+                                stages = stages.concat(stage)
+                            }
+                        }
+                        stages = stages.concat('</table>')
+                        $(".stages").html(stages); 
+                        const status = '<p>' + response.result + '<p>';
+                        $(".result").html(status); 
+
+                        if (response.result == "IN_PROGRESS"){
+                            sleep(500);
+                            timer();
+                        }
+                        else {
+                            spinnerBox.style.display = 'none'
+                        }
+                       
+                    },
+                    error: function(error){
+                        dataBox.innerHTML = `<b><strong>Failed to load the data</strong></b>`
+                        spinnerBox.style.display = 'none'
+                    }
+                })
+            }
+            function timer(){
+                set_stage();
+            }
+            function sleep(ms) {
+                const wakeUpTime = Date.now() + ms;
+                while (Date.now() < wakeUpTime) {}
+            }
         </script>
 {% endblock %}
 

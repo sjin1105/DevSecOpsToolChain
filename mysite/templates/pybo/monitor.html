@@ -4,111 +4,176 @@
 <h2 style="border-radius: 50px 15px 50px 0; border-left: inset; margin-right: 85%; padding: 0.6em; background: #EBEEF0;">&nbsp&nbsp Monitoring</h2>
 <div class='container'>
     <h3>Project Name &nbsp : {{ project.NAME }}</h3>
+    <a href="#" draggable="false" class="button-89" role="button" style="position: absolute; bottom: 730px; right: 200px;" onclick="set_stage()">새로고침</a>
+    <input type="hidden" name="PN" id="PN" value="{{ project.NAME }}"  maxlength="100">
     <br>
     <h4><Strong>Pods</Strong></h4>
-    <div id="monitor0">
-        {% for pod_item in pod_list %}
-        <div id="monitor1">
-            <p><strong>Name : {{ pod_item.metadata.name }}</strong></p>
-            <br>
-            Create Time : {{ pod_item.metadata.creationTimestamp }}
-            <br>
-            Node : {{ pod_item.spec.nodeName }}
-            <br>
-            State : {{ pod_item.status.phase }}
-            <br>
-            {% for pod_kind in pod_item.metadata.ownerReferences %}
-                Deploy Controller : {{ pod_kind.kind }}
-            {% endfor %}
-            <!--POD RUNNING 상태-->
-            <br>
-            <br>
-            <ul>
-                <li>
-                    <p>POD Status</p>
-                    <div id="monitor2">
-                    {% for pod_status in pod_item.status.conditions %} 
-                        <div>
-                        {{ pod_status.type }} : {{ pod_status.status }}
-                        </div>
-                    {% endfor %}
-                    </div>
-                </li>
-                <br>
-                <li>
-                    <!--Container information-->
-                    <p>Containers</p>
-                    {% for pod_container in pod_item.spec.containers %}
-                        <div id="monitor3">
-                            <strong>Name : {{ pod_container.name }}</strong>
-                            <br>
-                            Image : {{ pod_container.image }}
-                            {% for pod_condition in pod_item.status.containerStatuses %}
-                                {% if pod_condition.name == pod_container.name %}
-                                    <br>
-                                    {% for key, value in pod_condition.state.items %}
-                                        State : {{ key }}
-                                    {% endfor %}
-                                {% endif %}
-                            {% endfor %}
-                            <br>
-                            <br>
-                            <!--Conatiner Ports-->
-                            {% if pod_container.ports %}
-                                Ports Information
-                            {% endif %}
-                            {% for container_port in pod_container.ports %}
-                            <div id="monitor4">
-                                {% if container_port.name %}
-                                    {{ container_port.name }} : {{ container_port.containerPort }}/{{ container_port.protocol}}
-                                {% else %}
-                                    {{ container_port.containerPort }}/{{ container_port.protocol}}
-                                {% endif %}
-                            </div>
-                            {% endfor %}
-                        </div>
-                        <br>
-                    {% endfor %}
-                </li>
-            </ul>
-        </div>
-        <br>
-        <br>
-        {% endfor %}
+    <div id="spinner-box" class="text-center mt-5" style="display: none;">
+        <div class="spinner-border text-primary" role="status"></div>
     </div>
-    <br>
-    <br>
+    
+
+    <div class="pod_item"></div>
+
     <h4><Strong>Services</Strong></h4>
-    <div id="monitor0">
-        {% for service_item in service_list %}
-        <div id="monitor5">
-            <p><strong>Name : {{ service_item.metadata.name }}</strong></p>
-            <br>
-            Create Time : {{ service_item.metadata.creationTimestamp }}
-            <br>
-            Service Type : {{ service_item.spec.type }}
-            {% if service_item.status.loadBalancer %}
-                {{ service_item.status.loadBalancer }}
-            {% endif %}
-            <br>
-            <br>
-            <!--Service Ports-->
-            <ul>
-                <li>
-                <p>Ports Conatiners</p>
-                {% for service_port in service_item.spec.ports %}
-                    <div id="monitor6">
-                        {% for key, value in service_port.items %}
-                            {{ key }} : {{ value }}
-                            <br>
-                        {% endfor %}
-                    </div>
-                {% endfor %}
-                </li>
-            </ul>
-        </div>
-        <br>
-        {% endfor %}
+    <div id="spinner-box1" class="text-center mt-5" style="display: none;">
+        <div class="spinner-border text-primary" role="status"></div>
     </div>
+    <div class="service_item"></div>
 </div>
+<div>
+    <a href="{% url 'pybo:detail' project.id %}" class="delete btn btn-sm btn-outline-secondary" style="width:150px; height:40px; display: flex; justify-content: center; text-align: center; margin-top: 20px; margin-left: 300px; ">뒤로 가기</a>
+</div>
+<script>
+    function set_stage() {
+        const pname = $('input[name="PN"]').val();
+        const spinnerBox = document.getElementById('spinner-box')
+        const spinnerBox1 = document.getElementById('spinner-box1')
+        spinnerBox.style.display = ''
+        spinnerBox1.style.display = ''
+        $.ajax({
+            type: 'GET',
+            url: "{% url 'pybo:monitor_list' %}",
+            data: {'PN': pname},
+            success: function(response){
+                console.log(response)
+                var poditems = ''
+                var serviceitems = ''
+                poditems = poditems.concat('<div id="monitor0">');
+                for (count in response.pod_list)
+                {
+                    poditem = '<div id="monitor1"><p><strong>Name : ' + response.pod_list[count].metadata.name + '</strong></p><br>' + 'Create Time : ' + 
+                        response.pod_list[count].metadata.creationTimestamp + '<br>' + 'Node : ' + 
+                        response.pod_list[count].spec.nodeName + '<br>' + 'State : ' + 
+                        response.pod_list[count].status.phase + '<br>'
+                    poditems = poditems.concat(poditem);
+                    for (kind_count in response.pod_list[count].metadata.ownerReferences)
+                    {
+                        poditem = 'Deploy Controller : ' + response.pod_list[count].metadata.ownerReferences[kind_count].kind + '<br><br>'
+                        poditems = poditems.concat(poditem);
+                    }
+                    poditem = '<ul><li><p>POD Status</p><div id="monitor2">'
+                    poditems = poditems.concat(poditem);
+                    for (con_count in response.pod_list[count].status.conditions)
+                    {
+                        poditem = '<div>' + response.pod_list[count].status.conditions[con_count].type + ':' +
+                            response.pod_list[count].status.conditions[con_count].status + '</div>'
+                        poditems = poditems.concat(poditem);
+                    }
+                    poditem = '</div></li><br><li><p>Containers</p>'
+                    poditems = poditems.concat(poditem);
+
+                    for (con1_count in response.pod_list[count].spec.containers)
+                    {
+                        poditem = '<div id="monitor3"><strong>Name : ' + response.pod_list[count].spec.containers[con1_count].name +
+                            '</strong><br>Image : ' + response.pod_list[count].spec.containers[con1_count].image
+                        poditems = poditems.concat(poditem);
+
+                        for (con2_count in response.pod_list[count].status.containerStatuses)
+                        {
+                            if (response.pod_list[count].status.containerStatuses[con2_count].name == response.pod_list[count].spec.containers[con1_count].name)
+                            {
+                                poditem = '<br>'
+                                poditems = poditems.concat(poditem);
+
+                                var con3 = Object.keys(response.pod_list[count].status.containerStatuses[con2_count].state)
+                                for (con3_count in con3)
+                                {
+                                    poditem = 'State : ' + con3[con3_count]
+                                    poditems = poditems.concat(poditem);
+                                }
+                            }
+                        }
+                        poditem = '<br><br>'
+                        poditems = poditems.concat(poditem);
+
+                        if (response.pod_list[count].spec.containers[con1_count].ports)
+                        {
+                            poditem = 'Ports Information'
+                            poditems = poditems.concat(poditem);
+
+                            for (port_count in response.pod_list[count].spec.containers[con1_count].ports)
+                            {
+                                poditem = '<div id="monitor4">'
+                                poditems = poditems.concat(poditem);
+
+                                if (response.pod_list[count].spec.containers[con1_count].ports[port_count].name)
+                                {
+                                    poditem = response.pod_list[count].spec.containers[con1_count].ports[port_count].name + ' : ' +
+                                        response.pod_list[count].spec.containers[con1_count].ports[port_count].containerPort + ' / ' +
+                                        response.pod_list[count].spec.containers[con1_count].ports[port_count].protocol
+                                    poditems = poditems.concat(poditem);
+                                }
+                                else
+                                {
+                                    poditem = response.pod_list[count].spec.containers[con1_count].ports[port_count].containerPort + ' / ' +
+                                        response.pod_list[count].spec.containers[con1_count].ports[port_count].protocol
+                                    poditems = poditems.concat(poditem);
+                                }
+                                poditems = poditems.concat('</div>');
+                            }
+                        }
+                    poditems = poditems.concat('</div><br>');
+                    }
+                poditems = poditems.concat('</li></ul></div><br><br>');
+                }
+                poditems = poditems.concat('</div>');
+                $(".pod_item").html(poditems);
+                spinnerBox.style.display = 'None'
+                serviceitems = serviceitems.concat('<div id="monitor0">');
+                for (count in response.service_list)
+                {
+                    serviceitem = '<div id="monitor5"><p><strong>Name : ' + response.service_list[count].metadata.name + '</strong></p><br>' + 'Create Time : ' + 
+                        response.service_list[count].metadata.creationTimestamp + '<br>' + 'Service Type : ' + 
+                        response.service_list[count].spec.type
+                    serviceitems = serviceitems.concat(serviceitem);
+                    
+                    if (response.service_list[count].status.loadBalancer.ingress)
+                    {
+                        var load = '<br><p>External-IP : ' + response.service_list[count].status.loadBalancer.ingress[0].ip + '</p>'
+                        serviceitem = load
+                        if (load)
+                        {
+                            serviceitems = serviceitems.concat('   ' + serviceitem);
+                        }
+                    }
+                    serviceitem = '<br><br><ul><li><p>Ports Containers</p>'
+                    serviceitems = serviceitems.concat(serviceitem);
+
+                    for (port_count in response.service_list[count].spec.ports)
+                    {
+                        serviceitem = '<div id="monitor6">'
+                        serviceitems = serviceitems.concat(serviceitem);
+
+                        var port_con = Object.keys(response.service_list[count].spec.ports[port_count])
+                        var port_con1 = Object.values(response.service_list[count].spec.ports[port_count])
+                        for (num in port_con)
+                        {
+                            serviceitem = port_con[num] + ' : ' + port_con1[num] + '<br>'
+                            serviceitems = serviceitems.concat(serviceitem);
+                        }
+                        serviceitem = '</div>'
+                        serviceitems = serviceitems.concat(serviceitem);
+                    }
+                    serviceitem = '</li></ul></div><br>'
+                    serviceitems = serviceitems.concat(serviceitem);
+                }
+                serviceitems = serviceitems.concat('</div>');
+                $(".service_item").html(serviceitems);
+                spinnerBox1.style.display = 'None'
+            },
+            error: function(error){
+                dataBox.innerHTML = `<b><strong>Failed to load the data</strong></b>`
+                spinnerBox.style.display = 'none'
+            }
+        })
+    }
+    function timer(){
+        set_stage();
+    }
+    function sleep(ms) {
+        const wakeUpTime = Date.now() + ms;
+        while (Date.now() < wakeUpTime) {}
+    }
+</script>
 {% endblock %}

@@ -1,30 +1,23 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse
-from ..models import Project
-from django.utils import timezone
-from django.http import HttpResponseNotAllowed
+from ..models import Project, K8s, Jenkins, ArgoCD
 from ..forms import ProjectForm
-from django.core.paginator import Paginator
-from django.contrib.auth.decorators import login_required
-import pymysql
-from time import sleep
 import jenkins
 import requests
 import json
-
-token = "eyJhbGciOiJSUzI1NiIsImtpZCI6Ii1TYnB6THpzRnJMWTZGN3NZOHRsVjBMY1l4aFE0WWZOV3BLTnFMcDcxcTgifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImRlZmF1bHQtdG9rZW4tNXA1Z3EiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZGVmYXVsdCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6ImYwZDgxN2MzLWZhNDUtNGVlNy1iMmU3LTg1YTM2NTliNWE5OCIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpkZWZhdWx0OmRlZmF1bHQifQ.J8cDAoqSEO1hlLtf58AC-aV-w0CMQA9oxNFm1KZp5B-p6fGJqCluv6EiOVcZaGklzr4nbrvgzWJVItUv3MrougFnTIX_JT82LKHD2BHY9tyWKLgUrjot69QM07jEnBykmzAi87WoUqzYcA14xFFHI48HJDaanFTzgt-1d_kwT2Em74DYWQXNU-Pz-zuOW-Vct9zv8squOiyTeTpiN3q2-Np7TVnarJXaBxqVWV79y5Ou6RA_ku83P6bMWeUK1lSj2hkL-mdhD4uj9RA70LAt21Y8KMVL8KNgfNeZKLhNE4q3bTnm0-H549wXImnY6fFfWm4L-JlJABimty-hh6SVGQ"
 import urllib3
+
+token = K8s.objects.values()[0]['TOKEN']
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-host = "http://192.168.160.244:8080"
-username = "admin" #jenkins username here
-password = "admin" # Jenkins user password / api token here
+host = Jenkins.objects.values()[0]['HOST']
+username = Jenkins.objects.values()[0]['USER'] #jenkins username here
+password = Jenkins.objects.values()[0]['PASSWORD'] # Jenkins user password / api token here
 server = jenkins.Jenkins(host, username=username, password=password)
 
-argo_host = "http://10.108.239.122/"
-admin = "admin"
+project_name = "project"
+argo_host = ArgoCD.objects.values()[0]['HOST']
 request_url1 = """{}api/v1/session""".format(argo_host)
-data1 = {'username':'admin','password':'python3.10'}
+data1 = {'username':ArgoCD.objects.values()[0]['USER'],'password':ArgoCD.objects.values()[0]['PASSWORD']}
 api_response = requests.post(request_url1, data=json.dumps(data1))
 argocd_accesstoken = api_response.json()['token']
 
@@ -61,7 +54,9 @@ def project(request):
                 except:
                     context = {'project': project, 'state' : '4 : Git Hub Token이 잘못 되었습니다.'}
                     return render(request, 'pybo/mainpage.html', context)
-
+                request_url = "https://api.github.com/repos/{}/{}/vulnerability-alerts".format(userid, request.POST['NAME'])
+                headers = {"Authorization": "Bearer {}".format(request.POST['GITTOKEN']), "Accept": "application/vnd.github+json"}
+                api_response = requests.put(request_url, headers=headers)
                 Gitappurl = 'https://github.com/' + f'{userid}' + '/' f'{request.POST["NAME"]}' + '.git'
 
             # jenkins project 생성
@@ -193,7 +188,7 @@ def project_delete(request, project_id):
         api_response = requests.post(request_url, data=data, auth=user)
 
     # ArgoCD Project 삭제
-    argo_host = "http://10.108.239.122/"
+    argo_host = "http://argocd.xyz/"
     request_url = """{}api/v1/projects/{}""".format(argo_host, project.NAME)
     headers = {"Authorization": "Bearer {}".format(argocd_accesstoken)}
     api_response = requests.delete(request_url, headers=headers)

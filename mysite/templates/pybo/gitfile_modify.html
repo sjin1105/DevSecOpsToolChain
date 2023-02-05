@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2 class="my-3 border-bottom pb2">&nbsp&nbsp GitHub Application</h2>
+<h2 class="projecthead">&nbsp&nbsp GitHub Application</h2>
 <div>
     {% if state == '' %}
     {% else %}
@@ -9,6 +9,7 @@
     </script>
     {% endif %}
 </div>
+<br>
 <div class='container'>
     <h3><strong>Name &nbsp : {{ project.NAME }}</strong></h3>
     <div>
@@ -18,15 +19,18 @@
             <p><Strong>{{ project.GIT }}</Strong></p>
             <hr />
             <li>
-                <form method='post' class='post-form my-3' action="{% url 'pybo:github_editfile' project.id %}">
-                    {% csrf_token %}
-                    <p><strong>{{ file }}</strong></p>
-                    <p><textarea class="notes" name="data" id="data" rows="17" cols="150">{{ content }}</textarea></p>
-                    <input type="hidden" name="PATH" id="PATH" value="{{ path }}">
-                    <input type="hidden" name="FN" id="FN" value="{{ file }}">
-                    <button type="submit" class="button-55" role="button">File 작성</button>
-                </form>
-
+                {% if filekind == 'image' %}
+                    <img src="data:image/{{ ext }};base64, {{ content }}">
+                {% else %}
+                    <form method='post' class='post-form my-3' action="{% url 'pybo:github_editfile' project.id %}">
+                        {% csrf_token %}
+                        <p><strong>{{ file }}</strong></p>
+                        <p><textarea class="notes" name="data" id="data" rows="17" cols="150">{{ content }}</textarea></p>
+                        <input type="hidden" name="PATH" id="PATH" value="{{ path }}">
+                        <input type="hidden" name="FN" id="FN" value="{{ file }}">
+                        <button type="submit" class="button-55" role="button">File 작성</button>
+                    </form>
+                {% endif %}
                 <form method='post' class='post-form my-3' action="{% url 'pybo:github_deletefile' project.id %}">
                     {% csrf_token %}
                     <input type="hidden" name="PATH" id="PATH" value="{{ path }}">
