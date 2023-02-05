@@ -21,16 +21,5 @@
       }
       sh script: "echo Build completed"
     }
-  finally {
-    stage('Cleanup') {
-      sh script: "echo Clean up"
-    	}	
-     echo currentBuild.result
-     // send slack notification
-     if(currentBuild.result.equals("SUCCESS")){
-	slackSend (channel: '#jenkins-notification', color: '#00FF00', message: "build success : Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
-     }else{
-	slackSend (channel: '#jenkins-notification', color: '#F01717', message: "build failed : Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
-     }
-   }
+  }
 }
