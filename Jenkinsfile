@@ -3,7 +3,6 @@
   def dockerfile
   def anchorefile
 	
-  try {
     stage('Checkout') {
       // Clone the git repository
       checkout scm
@@ -21,5 +20,4 @@
       }
       sh script: "echo Build completed"
     }
-  }
 }
