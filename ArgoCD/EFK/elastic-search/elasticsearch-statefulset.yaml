@@ -65,7 +65,7 @@ spec:
       name: elasticsearch-persistent-storage
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName:
+      storageClassName: standard
       resources:
         requests:
           storage: 1Gi
