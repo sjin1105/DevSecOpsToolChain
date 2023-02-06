@@ -51,7 +51,7 @@ def jenkins_api(request, project_id):
 
 def jenkins_build_info(request):
     host, username, password, server = jenkins_def()
-    url = "http://192.168.160.244:8080//job/%s/lastBuild/wfapi" %(request.GET['PN'])
+    url = "http://192.168.160.229:8080//job/%s/lastBuild/wfapi" %(request.GET['PN'])
     headers = {'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8'}
 
     response = requests.get(url, headers=headers, auth=(username, password))
