@@ -5,13 +5,14 @@ metadata:
   labels:
     name: elasticsearch
 spec:
-  storageClassName:
+  storageClassName: standard
   capacity:
     storage: 1Gi
   volumeMode: Filesystem
   accessModes:
   - ReadWriteOnce
   claimRef:
+    namespace: logging
     name: elasticsearch-persistent-storage-elasticsearch-node-0
   persistentVolumeReclaimPolicy: Delete
   hostPath:
