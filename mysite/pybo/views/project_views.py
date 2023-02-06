@@ -86,7 +86,7 @@ def project(request):
                 if request.POST['KIND'] == 'GitHub App':
                     # sonarqube token 생성
                     request_url = "http://192.168.160.229:9000/api/user_tokens/generate"
-                    user = ("admin", "admin123")
+                    user = ("admin", "dkagh1.")
                     data = {"name": request.POST["NAME"]}
                     api_response = requests.post(request_url, data=data, auth=user)
                     api_json = api_response.json()
