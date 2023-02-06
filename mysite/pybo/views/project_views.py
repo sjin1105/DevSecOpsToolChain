@@ -95,7 +95,7 @@ def project(request):
 
                     # sonarqube project 생성
                     request_url = "http://192.168.160.229:9000/api/projects/create"
-                    user = ("admin", "admin123")
+                    user = ("admin", "dkagh1.")
                     data = {
                         "name": request.POST["NAME"],
                         "project": request.POST["NAME"],
@@ -192,12 +192,12 @@ def project_delete(request, project_id):
     #sonarqube 삭제
     if project.KIND == 'GitHub App':
         request_url = "http://192.168.160.229:9000/api/projects/delete"
-        user = ("admin", "admin123")
+        user = ("admin", "dkagh1.")
         data = {"project": project.NAME}
         api_response = requests.post(request_url, data=data, auth=user)
 
         request_url = "http://192.168.160.229:9000/api/user_tokens/revoke"
-        user = ("admin", "admin123")
+        user = ("admin", "dkagh1.")
         data = {"name": project.NAME}
         api_response = requests.post(request_url, data=data, auth=user)
 
