@@ -5,23 +5,34 @@ import jenkins
 import requests
 import json
 import urllib3
-
-token = K8s.objects.values()[0]['TOKEN']
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
-host = Jenkins.objects.values()[0]['HOST']
-username = Jenkins.objects.values()[0]['USER'] #jenkins username here
-password = Jenkins.objects.values()[0]['PASSWORD'] # Jenkins user password / api token here
-server = jenkins.Jenkins(host, username=username, password=password)
-
 project_name = "project"
-argo_host = ArgoCD.objects.values()[0]['HOST']
-request_url1 = """{}api/v1/session""".format(argo_host)
-data1 = {'username':ArgoCD.objects.values()[0]['USER'],'password':ArgoCD.objects.values()[0]['PASSWORD']}
-api_response = requests.post(request_url1, data=json.dumps(data1))
-argocd_accesstoken = api_response.json()['token']
+
+def token_def():
+    token = K8s.objects.values()[0]['TOKEN']
+    return token
+
+
+def jenkins_def():
+    host = Jenkins.objects.values()[0]['HOST']
+    username = Jenkins.objects.values()[0]['USER'] #jenkins username here
+    password = Jenkins.objects.values()[0]['PASSWORD'] # Jenkins user password / api token here
+    server = jenkins.Jenkins(host, username=username, password=password)
+    return host, username, password, server
+
+
+def argo():
+    argo_host = ArgoCD.objects.values()[0]['HOST']
+    request_url1 = """{}api/v1/session""".format(argo_host)
+    data1 = {'username':ArgoCD.objects.values()[0]['USER'],'password':ArgoCD.objects.values()[0]['PASSWORD']}
+    api_response = requests.post(request_url1, data=json.dumps(data1))
+    argocd_accesstoken = api_response.json()['token']
+    return argocd_accesstoken, argo_host
 
 def project(request):
+    host, username, password, server = jenkins_def()
+    argocd_accesstoken, argo_host = argo()
+    token = token_def()
     project = Project.objects.all()
     if request.method == "POST":
         form = ProjectForm(request.POST)
@@ -154,7 +165,9 @@ def project(request):
 
 def project_delete(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    
+    host, username, password, server = jenkins_def()
+    argocd_accesstoken, argo_host = argo()
+    token = token_def()
     if project.KIND == 'GitHub App':
 
         # Git hub userid 가져오기
@@ -163,12 +176,13 @@ def project_delete(request, project_id):
         api_response = requests.get(request_url, headers=headers)
         api_json = api_response.json()
         userid = api_json['login']
+        print(userid)
 
         # Git hub 삭제
         request_url = "https://api.github.com/repos/{}/{}".format(userid, project.NAME)
         headers = {"Authorization": "Bearer {}".format(project.GITTOKEN), "Accept": "application/vnd.github+json"}
         api_response = requests.delete(request_url, headers=headers)
-        print(api_response)
+        print('delete')
         
     # Jenkins Pipeline 삭제
     if project.KIND != 'App':

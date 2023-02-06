@@ -6,19 +6,24 @@ import json
 from django.http import JsonResponse
 from datetime import datetime, timedelta
 
-host = Jenkins.objects.values()[0]['HOST']
-username = Jenkins.objects.values()[0]['USER'] #jenkins username here
-password = Jenkins.objects.values()[0]['PASSWORD'] # Jenkins user password / api token here
-server = jenkins.Jenkins(host, username=username, password=password)
+def jenkins_def():
+    host = Jenkins.objects.values()[0]['HOST']
+    username = Jenkins.objects.values()[0]['USER'] #jenkins username here
+    password = Jenkins.objects.values()[0]['PASSWORD'] # Jenkins user password / api token here
+    server = jenkins.Jenkins(host, username=username, password=password)
+    return host, username, password, server
 
 project_name = "project"
-argo_host = ArgoCD.objects.values()[0]['HOST']
-request_url1 = """{}api/v1/session""".format(argo_host)
-data1 = {'username':ArgoCD.objects.values()[0]['USER'],'password':ArgoCD.objects.values()[0]['PASSWORD']}
-api_response = requests.post(request_url1, data=json.dumps(data1))
-argocd_accesstoken = api_response.json()['token']
+def argo():
+    argo_host = ArgoCD.objects.values()[0]['HOST']
+    request_url1 = """{}api/v1/session""".format(argo_host)
+    data1 = {'username':ArgoCD.objects.values()[0]['USER'],'password':ArgoCD.objects.values()[0]['PASSWORD']}
+    api_response = requests.post(request_url1, data=json.dumps(data1))
+    argocd_accesstoken = api_response.json()['token']
+    return argocd_accesstoken, argo_host
 
 def jenkins_api(request, project_id):
+    host, username, password, server = jenkins_def()
     addr = request.POST['addr']
     project = get_object_or_404(Project, pk=project_id)
     
@@ -45,7 +50,7 @@ def jenkins_api(request, project_id):
         return render(request, 'pybo/custom.html', context)
 
 def jenkins_build_info(request):
-
+    host, username, password, server = jenkins_def()
     url = "http://192.168.160.244:8080//job/%s/lastBuild/wfapi" %(request.GET['PN'])
     headers = {'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8'}
 
@@ -57,6 +62,7 @@ def jenkins_build_info(request):
     return JsonResponse(context)
 
 def jenkins_backup(request):
+    host, username, password, server = jenkins_def()
     init = open('./init_conf', 'r')
     f = init.read()
     server.reconfig_job('test', f)
@@ -64,6 +70,7 @@ def jenkins_backup(request):
     return redirect('pybo:index')
 
 def customapp(request):
+    argocd_accesstoken, argo_host = argo()
     """, project_name, app_name, parameter0, parameter1, parameter2, parameter3
         argocd application 생성
         파라미터:

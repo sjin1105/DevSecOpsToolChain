@@ -4,16 +4,20 @@ import requests
 import json
 
 project_name = "project"
-argo_host = ArgoCD.objects.values()[0]['HOST']
-request_url1 = """{}api/v1/session""".format(argo_host)
-data1 = {'username':ArgoCD.objects.values()[0]['USER'],'password':ArgoCD.objects.values()[0]['PASSWORD']}
-api_response = requests.post(request_url1, data=json.dumps(data1))
-argocd_accesstoken = api_response.json()['token']
+
+def argo():
+    argo_host = ArgoCD.objects.values()[0]['HOST']
+    request_url1 = """{}api/v1/session""".format(argo_host)
+    data1 = {'username':ArgoCD.objects.values()[0]['USER'],'password':ArgoCD.objects.values()[0]['PASSWORD']}
+    api_response = requests.post(request_url1, data=json.dumps(data1))
+    argocd_accesstoken = api_response.json()['token']
+    return argocd_accesstoken, argo_host
 
 def app(request):
     return render(request, 'pybo/appcreate.html')
 
 def webapp(request):
+    argocd_accesstoken, argo_host = argo()
     """, project_name, app_name, parameter0, parameter1, parameter2, parameter3
         argocd application 생성
         파라미터:
@@ -105,6 +109,7 @@ def webapp(request):
 
 
 def dbapp(request):
+    argocd_accesstoken, argo_host = argo()
     """, project_name, app_name, parameter0, parameter1, parameter2, parameter3
         argocd application 생성
         파라미터:

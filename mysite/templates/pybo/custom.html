@@ -76,6 +76,7 @@
                     <form method='post' class='post-form my-3' action="{% url 'pybo:customapp' %}">
                     {% csrf_token %}
                     <p><strong>Argo CD Deploy</strong></p>
+                    <p>(* 디렉토리 경로에 Root 경로 /를 붙이지 마시오)</p>
                     <input type="text" name="GIT" id="GIT" placeholder="Argo CD Repository" value="">
                     <input type="hidden" name="ADDR" id="ADDR" value="{{ project.GIT }}"  maxlength="100">
                     <input type="hidden" name="PN" id="PN" value="{{ project.NAME }}"  maxlength="100">

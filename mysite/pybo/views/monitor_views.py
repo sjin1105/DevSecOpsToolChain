@@ -5,7 +5,10 @@ from django.http import JsonResponse
 import urllib3
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-token = K8s.objects.values()[0]['TOKEN']
+
+def token_def():
+    token = K8s.objects.values()[0]['TOKEN']
+    return token
 
 def logging(request):
     return render(request, 'pybo/logging.html')
@@ -16,7 +19,7 @@ def monitor(request, project_id):
     return render(request, 'pybo/monitor.html', context)
 
 def monitor_list(request):
-        
+    token = token_def()
     # Kubernetes PODS 가져오기    
     request_url = "https://10.0.0.79:6443/api/v1/namespaces/{}/pods/" .format(request.GET['PN'])
     headers = {"Authorization": "Bearer {}".format(token)}
