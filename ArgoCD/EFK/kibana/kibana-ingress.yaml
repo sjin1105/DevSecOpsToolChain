@@ -8,7 +8,7 @@ metadata:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   rules:
-  - host: logging.xyz
+  - host: logging.innogrid.duckdns.org
     http:
       paths:
       - path: /
