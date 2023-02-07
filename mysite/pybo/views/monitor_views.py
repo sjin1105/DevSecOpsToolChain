@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from ..models import Project, K8s
+from ..models import Project, K8s, DNS
 import requests
 from django.http import JsonResponse
 import urllib3
@@ -9,9 +9,14 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 def token_def():
     token = K8s.objects.values()[0]['TOKEN']
     return token
+def grafana(request):
+    print(DNS.objects.values())
+    context = {'dns' : DNS.objects.values()[0]['domain']}
+    return render(request, 'pybo/grafana.html', context)
 
 def logging(request):
-    return render(request, 'pybo/logging.html')
+    context = {'dns' : DNS.objects.values()[0]['domain']}
+    return render(request, 'pybo/logging.html', context)
 
 def monitor(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
@@ -47,5 +52,3 @@ def monitor_list(request):
     context = {'pod_list' : pod_items, 'service_list' : service_items}
     return JsonResponse(context)
     
-def grafana(request):
-    return render(request, 'pybo/grafana.html')
