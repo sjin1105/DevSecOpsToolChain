@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Project, Jenkins, ArgoCD, K8s
+from .models import Project, Jenkins, ArgoCD, K8s, DNS
 
 # Register your models here.
 
