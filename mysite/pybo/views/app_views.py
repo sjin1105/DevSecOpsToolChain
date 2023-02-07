@@ -41,6 +41,8 @@ def webapp(request):
     if flag == 0:
         print("Project doesn't exist")
     
+    dns = DNS.objects.values()[0]['domain']
+    
     if 'web' in request.POST:
         response = False
         helm_value0 = f"{request.POST['WNAME']}"
@@ -75,7 +77,7 @@ def webapp(request):
                             { "name" : f"{request.POST['web']}" + "Password", "value" : f"{helm_value1}"},
                             { "name" : "service.type", "value" : "ClusterIP"},
                             { "name" : "ingress.enabled", "value" : "true"},
-                            { "name" : "ingress.hostname", "value" : "%s%s.xyz" %(request.POST['PN'], request.POST['web'])},
+                            { "name" : "ingress.hostname", "value" : "%s%s.%s" %(request.POST['PN'], request.POST['web'], dns)},
                             { "name" : "ingress.annotations", "value" : 'kubernetes.io/ingress.class: "nginx"'},
                         ]
                     }
