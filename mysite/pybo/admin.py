@@ -15,9 +15,12 @@ class ArgoCDAdmin(admin.ModelAdmin):
 class K8sAdmin(admin.ModelAdmin):
     search_fields = ['NAME']
 
+class DNSAdmin(admin.ModelAdmin):
+    search_fields = ['NAME']
 
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Jenkins, JenkinsAdmin)
 admin.site.register(ArgoCD, ArgoCDAdmin)
 admin.site.register(K8s, K8sAdmin)
+admin.site.register(DNS, DNSAdmin)
 
