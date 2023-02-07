@@ -76,4 +76,7 @@ class ArgoCD(models.Model):
     
 class K8s(models.Model):
     TOKEN = models.CharField(max_length=1200, null=False)
+    
+class dns(models.Model):
+    domain = models.URLField(max_length=200, null=False)
 
