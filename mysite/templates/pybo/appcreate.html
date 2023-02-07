@@ -29,7 +29,7 @@
     <div style="margin-left: 24%; margin-right: 17%;">
         <img draggable="false" src="{% static 'was.png' %}" style="width:220px; height:220px;">
         <br><br>
-        <h4>웹 애플리케이션</h4>
+        <h4>Web Application Service</h4>
         <form method='post' class='post-form my-3' action="{% url 'pybo:webapp' %}">
             {% csrf_token %}
             <select name="web" id='web'>
@@ -54,7 +54,7 @@
     <div>
         <img draggable="false" src="{% static 'db.png' %}" style="margin-left: 10px; width:160px; height:220px;">
         <br><br>
-        <h4>DB 애플리케이션</h4>
+        <h4>Database Management System</h4>
         <form method='post' class='post-form my-3' action="{% url 'pybo:dbapp' %}">
             {% csrf_token %}
             <select name="db" id='db'>
