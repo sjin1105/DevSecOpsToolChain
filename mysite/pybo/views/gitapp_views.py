@@ -4,16 +4,6 @@ import requests
 import json
 import base64
 
-def docker(request, project_id):
-    project = get_object_or_404(Project, pk=project_id)
-    context = {'project': project, 'state': ''}
-    return render(request, 'pybo/docker.html', context)
-
-def argocd(request, project_id):
-    project = get_object_or_404(Project, pk=project_id)
-    context = {'project': project, 'state': ''}
-    return render(request, 'pybo/yaml.html', context)
-
 def create_jenkins(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
 
