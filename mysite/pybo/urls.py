@@ -25,9 +25,7 @@ urlpatterns = [
     path('customapp/', customapp_views.customapp, name='customapp'),
 
     # gitapp_views.py
-    path('docker/<int:project_id>/', gitapp_views.docker, name='docker'),
     path('docker/create/<int:project_id>', gitapp_views.create_jenkins, name='create_jenkins'),
-    path('YAML/<int:project_id>/', gitapp_views.argocd, name='argocd'),
     path('github_list/<int:project_id>/', gitapp_views.github_listfile, name='github_listfile'),
     path('github_list/create/<int:project_id>', gitapp_views.github_createfile, name='github_createfile'),
     path('github_list/edit/<int:project_id>', gitapp_views.github_editfile, name='github_editfile'),
@@ -41,5 +39,6 @@ urlpatterns = [
     path('grafana/', monitor_views.grafana, name='grafana'),
 
     # domain_views.py
-    path('domain_create/', domain_views.domain_create, name='domain_create'),
+    path('domain_create//<int:project_id>', domain_views.domain_create, name='domain_create'),
+    path('domain_delete//<int:project_id>', domain_views.domain_delete, name='domain_delete'),
 ]
