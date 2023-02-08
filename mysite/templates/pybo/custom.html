@@ -26,8 +26,17 @@
     <h3><strong> Project Name : {{ project.NAME }}</strong></h3>
     <br>
     <div>
-        <p><Strong>GitHub Repository</strong></p>
-        <p><Strong>{{ project.GIT }}</Strong></p>
+        <table>
+            <th>
+                <p>GitHub Repository</p>
+                <p><Strong>{{ project.GIT }}</Strong></p>
+            </th>
+            <th style="padding-left: 740px">
+                <form method="GET" class='post-form my-3' action="{% url 'pybo:domain_create' project.id %}">
+                    <button type="submit" class="button-55" role="button">도메인 관리</button>
+                </form>
+            </th>
+        </table>
         <hr/>
         <table>
             <tr>
