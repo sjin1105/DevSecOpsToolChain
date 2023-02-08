@@ -134,9 +134,6 @@ def create_jenkins(request, project_id):
         headers = {"Authorization": "Bearer {}".format(project.GITTOKEN), "Accept": "application/vnd.github+json"}
         api_response = requests.put(request_url2, data=json.dumps(data2), headers=headers)
         api_json = api_response.json()
-
-        context = {'project': project, 'state': 'GitHub에 작성이 완료되었습니다.'}
-
         return redirect('pybo:github_listfile', project_id=project.id)
 
 
