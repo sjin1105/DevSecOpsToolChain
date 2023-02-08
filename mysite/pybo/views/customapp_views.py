@@ -142,7 +142,6 @@ def customapp(request):
 
     except Exception as e:
         print("[332] create argocd application is failed: {}".format(e))
-    print(project)
     if request.POST['KIND'] == 'GitHub App':
         return render(request, 'pybo/github.html', context)
     else:
