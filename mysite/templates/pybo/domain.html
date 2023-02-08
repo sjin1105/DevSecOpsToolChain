@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<div>
+    {% if state == '' %}
+    {% elif state == 'delete' %}
+    <script>
+        alert('도메인이 삭제되었습니다.')
+    </script>
+    {% else %}
+    <script>
+        alert('서비스 도메인 : {{ domain }}')
+    </script>
+    {% endif %}
+</div>
+<div class='container'>
+    <h3><strong> Project Name : {{ project.NAME }}</strong></h3>
+    <br>
+    <div>
+        <table>
+            <th>
+                <p><strong>도메인 생성하기</strong></p>
+                <form method="POST" class='post-form my-3' action="{% url 'pybo:domain_create' project.id %}">
+                    {% csrf_token %}
+                    <input type="text" name="SN" id="SN" placeholder="Service Name" value="">
+                    <input type="text" name="SP" id="SP" placeholder="Service Port" value="">
+                    <input type="hidden" name="PN" id="PN" value="{{ project.NAME }}"  maxlength="100">
+                    <button type="submit" class="button-55" role="button">생성하기</button>
+                </form>
+            </th>
+        </table>
+        <form method="POST" class='post-form my-3' action="{% url 'pybo:domain_delete' project.id %}">
+            {% csrf_token %}
+            <input type="hidden" name="PN" id="PN" value="{{ project.NAME }}"  maxlength="100">
+            <button type="submit" class="button-55" role="button" style="color : red">도메인 삭제하기</button>
+        </form>
+        <a href="{% url 'pybo:detail' project.id %}" class="delete btn btn-sm btn-outline-secondary" style="width:150px; height:40px; display: flex; justify-content: center; text-align: center;">뒤로 가기</a>
+    </div>
+{% endblock %}
+
