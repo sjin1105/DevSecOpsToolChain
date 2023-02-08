@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import app_views, base_views, customapp_views, gitapp_views, project_views, monitor_views
+from .views import app_views, base_views, customapp_views, gitapp_views, project_views, monitor_views, domain_views
 
 app_name = 'pybo'
 
@@ -39,4 +39,7 @@ urlpatterns = [
     path('monitor/<int:project_id>', monitor_views.monitor, name='monitor'),
     path('logging/', monitor_views.logging, name='logging'),
     path('grafana/', monitor_views.grafana, name='grafana'),
+
+    # domain_views.py
+    path('domain_create/', domain_views.domain_create, name='domain_create'),
 ]
