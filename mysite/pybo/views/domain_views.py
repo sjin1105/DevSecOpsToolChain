@@ -1,12 +1,13 @@
 from django.shortcuts import render, get_object_or_404
-from ..models import K8s
+from ..models import K8s, Project
 import requests
 
 def token_def():
     token = K8s.objects.values()[0]['TOKEN']
     return token
 
-def domain_create(request):
+def domain_create(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
     token = token_def()
     request_url = "https://10.0.0.79:6443/apis/networking.k8s.io/v1/namespaces/{}/ingresses/".format(request.POST['PN'])
     headers = {"Authorization": "Bearer {}".format(token), "Content-type": "application/yaml"}
@@ -35,6 +36,8 @@ def domain_create(request):
     ''' %(request.POST['PN'], request.POST['SN'], request.POST['SP'])
 
     api_response = requests.post(request_url, headers=headers, verify=False, data=(body))
-    api_json = api_response.json()
-    context = {"state" : '', 'domain' : '%s.innogrid.duckdns.org' %(request.POST['PN'])}
-    return render(request, 'pybo/github.html', context)
+    context = {'project' : project, "state" : '', 'domain' : '%s.innogrid.duckdns.org' %(request.POST['PN'])}
+    if project.KIND == 'Custom App':
+        return render(request, 'pybo/custom.html', context)
+    else:
+        return render(request, 'pybo/github.html', context)
