@@ -106,7 +106,7 @@ def webapp(request):
         finally:
             return render(request, 'pybo/appcreate.html', context)
     else:
-        context = {'project' : project, 'state' : ''}
+        context = {'project' : project, 'state' : 'None'}
     return render(request, 'pybo/appcreate.html', context)
 
 
@@ -200,7 +200,7 @@ def dbapp(request):
         finally:
             return render(request, 'pybo/appcreate.html', context)
     else:
-        context = {'project' : project, 'state' : ''}
+        context = {'project' : project, 'state' : 'None'}
     return render(request, 'pybo/appcreate.html', context)
 
     
