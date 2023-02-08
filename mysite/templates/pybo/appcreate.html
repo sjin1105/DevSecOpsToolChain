@@ -3,6 +3,10 @@
 {% load static %}
 <div>
     {% if state == '' %}
+    {% elif state == 'create' %}
+    <script>
+        alert('애플리케이션 생성 성공')
+    </script>
     {% else %}
     <script>
         alert('애플리케이션 정보를 입력하세요')
