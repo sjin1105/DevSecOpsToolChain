@@ -3,8 +3,6 @@ from ..models import Project, ArgoCD, DNS
 import requests
 import json
 
-project_name = "project"
-
 def argo():
     argo_host = ArgoCD.objects.values()[0]['HOST']
     request_url1 = """{}api/v1/session""".format(argo_host)
@@ -97,7 +95,7 @@ def webapp(request):
 
             if api_response.ok:
                 response = True
-                print(f"argocd 애플리케이션 생성 성공: {project_name}")
+                print(f"argocd 애플리케이션 생성 성공")
             else:
                 print("[332] create argocd application is failed: {}".format(api_response.json()))
 
@@ -191,7 +189,7 @@ def dbapp(request):
 
             if api_response.ok:
                 response = True
-                print(f"argocd 애플리케이션 생성 성공: {project_name}")
+                print(f"argocd 애플리케이션 생성 성공")
             else:
                 print("[332] create argocd application is failed: {}".format(api_response.json()))
 
