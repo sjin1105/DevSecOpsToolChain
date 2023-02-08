@@ -93,7 +93,7 @@ def webapp(request):
             request_url = """{}api/v1/applications""".format(argo_host)
             headers = {"Authorization": "Bearer {}".format(argocd_accesstoken)}
             api_response = requests.post(request_url, data=json.dumps(data), headers=headers)
-            context = {'project' : project, 'url' : "%s%s.xyz" %(request.POST['PN'], request.POST['web']), 'state' : ''}
+            context = {'project' : project, 'url' : "%s%s.xyz" %(request.POST['PN'], request.POST['web']), 'state' : 'create'}
 
             if api_response.ok:
                 response = True
@@ -106,7 +106,7 @@ def webapp(request):
         finally:
             return render(request, 'pybo/appcreate.html', context)
     else:
-        context = {'project' : project, 'state' : 'None'}
+        context = {'project' : project, 'state' : ''}
     return render(request, 'pybo/appcreate.html', context)
 
 
@@ -187,7 +187,7 @@ def dbapp(request):
             request_url = """{}api/v1/applications""".format(argo_host)
             headers = {"Authorization": "Bearer {}".format(argocd_accesstoken)}
             api_response = requests.post(request_url, data=json.dumps(data), headers=headers)
-            context = {'project' : project, 'url' : "%s%s.xyz" %(request.POST['PN'], request.POST['db']), 'state' : ''}
+            context = {'project' : project, 'url' : "%s%s.xyz" %(request.POST['PN'], request.POST['db']), 'state' : 'create'}
 
             if api_response.ok:
                 response = True
@@ -200,7 +200,7 @@ def dbapp(request):
         finally:
             return render(request, 'pybo/appcreate.html', context)
     else:
-        context = {'project' : project, 'state' : 'None'}
+        context = {'project' : project, 'state' : ''}
     return render(request, 'pybo/appcreate.html', context)
 
     
