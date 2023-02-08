@@ -7,10 +7,10 @@ class ProjectAdmin(admin.ModelAdmin):
     search_fields = ['NAME']
 
 class JenkinsAdmin(admin.ModelAdmin):
-    search_fields = ['NAME']
+    search_fields = ['HOST']
 
 class ArgoCDAdmin(admin.ModelAdmin):
-    search_fields = ['NAME']
+    search_fields = ['HOST']
 
 class K8sAdmin(admin.ModelAdmin):
     search_fields = ['NAME']
