@@ -8,20 +8,25 @@ def token_def():
 
 def domain_create(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    token = token_def()
-    request_url = "https://10.0.0.79:6443/apis/networking.k8s.io/v1/namespaces/{}/ingresses/".format(request.POST['PN'])
-    headers = {"Authorization": "Bearer {}".format(token), "Content-type": "application/yaml"}
-
-    body ='''
+    if request.method == "POST":
+        token = token_def()
+        request_url = "https://10.0.0.79:6443/apis/networking.k8s.io/v1/namespaces/{}/ingresses/".format(request.POST['PN'])
+        headers = {"Authorization": "Bearer {}".format(token), "Content-type": "application/yaml"}
+        body ='''
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: nginx-django-ingress
+  name: nginx-%s-ingress
   annotations:
     kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: cert-manager-webhook-duckdns-production
     nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
+  tls:
+  - hosts:
+    - %s.innogrid.duckdns.org
+    secretName: innogrid-tls-secret-production
   rules:
   - host: %s.innogrid.duckdns.org
     http:
@@ -33,12 +38,21 @@ spec:
             name: %s
             port:
               number: %s
-    ''' %(request.POST['PN'], request.POST['SN'], request.POST['SP'])
+    ''' %(request.POST['PN'], request.POST['PN'], request.POST['PN'], request.POST['SN'], request.POST['SP'])
 
-    api_response = requests.post(request_url, headers=headers, verify=False, data=(body))
-    api_json = api_response.json()
-    context = {'project' : project, "state" : '', 'domain' : '%s.innogrid.duckdns.org' %(request.POST['PN'])}
-    if project.KIND == 'Custom App':
-        return render(request, 'pybo/custom.html', context)
+        api_response = requests.post(request_url, headers=headers, verify=False, data=(body))
+        context = {'project' : project, "state" : 'create', 'domain' : '%s.innogrid.duckdns.org' %(request.POST['PN'])}
+        return render(request, 'pybo/domain.html', context)
     else:
-        return render(request, 'pybo/github.html', context)
+        context = {'project' : project, "state" : ''}
+    return render(request, 'pybo/domain.html', context)
+
+def domain_delete(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    token = token_def()
+    request_url = "https://10.0.0.79:6443/apis/networking.k8s.io/v1/namespaces/{}/ingresses/".format(request.POST['PN'])
+    headers = {"Authorization": "Bearer {}".format(token), "Content-type": "application/yaml"}
+
+    api_response = requests.delete(request_url, headers=headers, verify=False)
+    context = {'project' : project, 'state' : 'delete'}
+    return render(request, 'pybo/domain.html', context)
