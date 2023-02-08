@@ -23,7 +23,15 @@
 </div>
 <div class='container' style="margin-bottom: 100px;">
     <h3><strong>Project Name : {{ project.NAME }}</strong></h3>
-    <br><br>    
+    <table>
+        <th style="padding-left: 740px">
+            <form method="GET" class='post-form my-3' action="{% url 'pybo:domain_create' project.id %}">
+                <button type="submit" class="button-55" role="button">도메인 관리</button>
+            </form>
+        </th>
+    </table>
+    <br><br> 
+    <hr />
     <div>
         {% csrf_token %}
         <table>
@@ -93,6 +101,7 @@
                     <img draggable="false" src="https://blog.kakaocdn.net/dn/skltp/btq8FeXAVbT/kvEk8k4Id91wQ938gq3CYk/img.png" style="width:250px; height:250px; display: block; margin-left: auto; margin-right: auto;">
                     <div class="infor">
                         <p><strong>Argo CD Deploy</strong></p>
+                        <p>(* 디렉토리 경로에 Root 경로 /를 붙이지 마시오)</p>
                         <form method='post' class='post-form my-3' action="{% url 'pybo:customapp' %}">
                             {% csrf_token %}
                             <input type="text" name="GIT" id="GIT" placeholder="Argo CD Repository" value="">
