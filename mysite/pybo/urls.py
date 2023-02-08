@@ -39,6 +39,6 @@ urlpatterns = [
     path('grafana/', monitor_views.grafana, name='grafana'),
 
     # domain_views.py
-    path('domain_create//<int:project_id>', domain_views.domain_create, name='domain_create'),
-    path('domain_delete//<int:project_id>', domain_views.domain_delete, name='domain_delete'),
+    path('domain_create/<int:project_id>', domain_views.domain_create, name='domain_create'),
+    path('domain_delete/<int:project_id>', domain_views.domain_delete, name='domain_delete'),
 ]
