@@ -26,7 +26,7 @@ spec:
   tls:
   - hosts:
     - %s.innogrid.duckdns.org
-    secretName: innogrid-tls-secret-production
+    secretName: %s.innogrid-tls-secret-production
   rules:
   - host: %s.innogrid.duckdns.org
     http:
@@ -38,7 +38,7 @@ spec:
             name: %s
             port:
               number: %s
-    ''' %(request.POST['PN'], request.POST['PN'], request.POST['PN'], request.POST['SN'], request.POST['SP'])
+    ''' %(request.POST['PN'], request.POST['PN'], request.POST['PN'], request.POST['PN'], request.POST['SN'], request.POST['SP'])
 
         api_response = requests.post(request_url, headers=headers, verify=False, data=(body))
         context = {'project' : project, "state" : 'create', 'domain' : '%s.innogrid.duckdns.org' %(request.POST['PN'])}
