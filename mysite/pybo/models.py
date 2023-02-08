@@ -78,5 +78,5 @@ class K8s(models.Model):
     TOKEN = models.CharField(max_length=1200, null=False)
     
 class DNS(models.Model):
-    domain = models.URLField(max_length=200, null=False)
+    domain = models.CharField(max_length=200, null=False)
 
