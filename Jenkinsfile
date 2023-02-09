@@ -21,4 +21,5 @@
       }
       sh script: "echo Build completed"
     }
+  }
 }
