@@ -21,7 +21,9 @@
             <hr /> 
                 <form method='post' class='post-form my-3' action="{% url 'pybo:create_jenkins' project.id %}">
                     {% csrf_token %}
-                    <button type='submit' class="button-55" role="button" value="Jenkins">기본 Jenkins 작성</button>
+                    <button type='submit' class="button-55" role="button" value="Jenkins">기본 Jenkinsfile 작성</button>
+                    <br><br>
+                    <p style="color: red">( ** 보안 검사가 포함된 기본 Jenkinsfile로 빌드할 시 이미지명 : core.innogrid.duckdns.org/projects/(프로젝트명):latest</p>
                 </form>
                 <form method='post' class='post-form my-3' enctype="multipart/form-data" action="{% url 'pybo:github_fileupload' project.id %}">
                     {% csrf_token %}
@@ -71,7 +73,7 @@
         <hr />
         <table border="0" width="600">
             <th>
-                <form method='GET' class='post-form my-3' action="{% url 'pybo:github_createfile' project.id %}">
+                <form method='POST' class='post-form my-3' action="{% url 'pybo:github_createfile' project.id %}">
                     {% csrf_token %}
                     <input type="text" name="FN" id="FN">
                     <input type="hidden" name="PATH" id="PATH" value="{{ addr }}">
