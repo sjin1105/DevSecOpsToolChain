@@ -12,14 +12,17 @@
         <li class="list-group-item">
             <div class="form-row">
                 <form method='post' class='post-form my-3' action="{% url 'pybo:project' %}">
-                    <h6>프로젝트 이름<i class="reqire"></h6>
-                    <input type="text" placeholder="Project Name" name="NAME" id="NAME" value="" maxlength="80"/>
+                    <h6>프로젝트 이름</h6>
+                    <input type="text" placeholder="Project Name" name="NAME" id="NAME" value="" maxlength="80">
                     <select name="KIND" id='KIND'>
                         <option value="0" disabled selected>종류</option>
                         <option value="App">Application</option>
                         <option value="Custom App">Custom App</option>
                         <option value="GitHub App">GitHub App</option>
                     </select>
+                    <br><br>
+                    <h6>프로젝트 비밀번호</h6>
+                    <input type="password" placeholder="Project Password" name="PASSWORD" id="PASSWORD" value="" maxlength="80">
                     <br><br>
                     <h6 id="GITTEXT" style="display: none;">프로젝트 GitHub<i class="reqire">*</i></h6>
                     <input type="text" name="GIT" id="GIT" value="" style="display: none; width:500px;">
