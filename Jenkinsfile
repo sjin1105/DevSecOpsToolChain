@@ -15,4 +15,5 @@
 	    app.push("$BUILD_NUMBER")
 	    app.push("latest")
       }
+    }
 }
