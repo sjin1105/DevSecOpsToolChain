@@ -63,6 +63,7 @@ class Project(models.Model):
     GIT = models.URLField(max_length=200,  blank=True, validators=[git_validate])
     GITTOKEN = models.CharField(max_length=100,  blank=True, validators=[gittoken_validate])
     SONARTOKEN = models.CharField(max_length=100,  blank=True)
+    PASSWORD = models.CharField(max_length=100, null=False)
 
 class Jenkins(models.Model):
     HOST = models.CharField(max_length=100, null=False)
@@ -76,7 +77,7 @@ class ArgoCD(models.Model):
     
 class K8s(models.Model):
     TOKEN = models.CharField(max_length=1200, null=False)
-    
+
 class DNS(models.Model):
     domain = models.CharField(max_length=200, null=False)
 
