@@ -34,7 +34,7 @@
         <img draggable="false" src="{% static 'was.png' %}" style="width:220px; height:220px;">
         <br><br>
         <h4>Web Application Service</h4>
-        <form method='post' class='post-form my-3' action="{% url 'pybo:webapp' %}">
+        <form method='post' class='post-form my-3' action="{% url 'pybo:webapp' %}" id="webcreate">
             {% csrf_token %}
             <select name="web" id='web'>
                 <option value="0" disabled selected >종류</option>
@@ -51,7 +51,7 @@
             <input type="password" placeholder="Web User Password" name="WPW" id="WPW" value="">
             <br>
             <br>
-            <button type="submit" class="button-55" role="button">생성하기</button>
+            <button type="submit" class="button-55" onclick = "webcheck()" role="button">생성하기</button>
         </form>
     </div>
     <br>
@@ -59,7 +59,7 @@
         <img draggable="false" src="{% static 'db.png' %}" style="margin-left: 10px; width:160px; height:220px;">
         <br><br>
         <h4>Database Management System</h4>
-        <form method='post' class='post-form my-3' action="{% url 'pybo:dbapp' %}">
+        <form method='post' class='post-form my-3' action="{% url 'pybo:dbapp' %}" id="dbcreate">
             {% csrf_token %}
             <select name="db" id='db'>
                 <option value="0" disabled selected >종류</option>
@@ -80,7 +80,7 @@
             <input type="text" placeholder="DB Name" name="DB" id="DB" value="">
             <br>
             <br>
-            <button type='submit' class="button-55" role="button">생성하기</button>
+            <button type='submit' onclick = "dbcheck()"  class="button-55" role="button">생성하기</button>
         </form>
     </div>
 </div>
@@ -95,5 +95,31 @@
             };
         });
     });
+</script>
+<div>
+    <input type="hidden" name="ppw" id="ppw" value="{{ project.PASSWORD }}" maxlength="100">
+</div>
+<script type='text/javascript'>
+    function webcheck() {
+        const ppw = $('input[name="ppw"]').val();
+        const pid = $('input[name="PID"]').val();
+        var pw = prompt("비밀번호를 입력하시오.")
+        if (pw != ppw)
+        {
+            alert('비밀번호가 일치하지 않습니다.')
+            document.getElementById('webcreate').action = ''
+        }
+    }
+
+    function dbcheck() {
+        const ppw = $('input[name="ppw"]').val();
+        const pid = $('input[name="PID"]').val();
+        var pw = prompt("비밀번호를 입력하시오.")
+        if (pw != ppw)
+        {
+            alert('비밀번호가 일치하지 않습니다.')
+            document.getElementById('dbcreate').action = ''
+        }
+    }
 </script>
 {% endblock %}
