@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
 {% load static %}
-
 <table style="width: 100%;">
     <th>
         <h3 class="projecthead">&nbsp&nbsp Custom Application</h3>
@@ -32,8 +31,8 @@
                 <p><Strong>{{ project.GIT }}</Strong></p>
             </th>
             <th style="padding-left: 740px">
-                <form method="GET" class='post-form my-3' action="{% url 'pybo:domain_create' project.id %}">
-                    <button type="submit" class="button-55" role="button">도메인 관리</button>
+                <form id="domain" method="GET" class='post-form my-3' action="{% url 'pybo:domain_create' project.id %}">
+                    <button type="submit" class="button-55" role="button" onclick="domaincheck()">도메인 관리</button>
                 </form>
             </th>
         </table>
@@ -42,7 +41,7 @@
             <tr>
                 <th style="padding-left: 150px;">
                     <img draggable="false" src="{% static 'jenkins_image.png' %}" style="width:300px; height:220px;">
-                    <form method='post' class='post-form my-3' action="{% url 'pybo:jenkins_api' project.id %}">
+                    <form id="jenkins" method='post' class='post-form my-3' action="{% url 'pybo:jenkins_api' project.id %}">
                         {% csrf_token %}
                         <p><strong>Jenkins Build</strong></p>
                         <p>빌드할 GitHub Repository 주소</p>
@@ -51,7 +50,7 @@
                         <input type="hidden" name="PN" id="PN" value="{{ project.NAME }}"  maxlength="100">
                         <input type="hidden" name="KIND" id="KIND" value="{{ project.KIND }}"  maxlength="100">
                         <input type="hidden" name="PID" id="PID" value="{{ project.id }}"  maxlength="100">
-                        <button type="submit" class="button-55" role="button">빌드하기</button>
+                        <button type="submit" class="button-55" role="button" onclick = "buildcheck()">빌드하기</button>
                     </form>
                     <br>
                     <div>
@@ -60,7 +59,7 @@
                                 <a href="#" draggable="false" class="button-89" role="button" onclick="timer()">빌드 확인</a>
                             </td>
                             <td>
-                                <a draggable="false" href='http://192.168.160.229:8080/job/{{ project.NAME }}/' class="button-89" role="button" target='_blank' style="text-decoration: none;">
+                                <a draggable="false" href='http://192.168.160.244:8080/job/{{ project.NAME }}/' class="button-89" role="button" target='_blank' style="text-decoration: none;">
                                     Jenkins 페이지 이동
                                 </a>
                             </td>
@@ -82,16 +81,16 @@
                 </th>
                 <th style="padding-left: 100px;">
                     <img draggable="false" src="https://blog.kakaocdn.net/dn/skltp/btq8FeXAVbT/kvEk8k4Id91wQ938gq3CYk/img.png" style="width:300px; height:250px;">
-                    <form method='post' class='post-form my-3' action="{% url 'pybo:customapp' %}">
-                    {% csrf_token %}
-                    <p><strong>Argo CD Deploy</strong></p>
-                    <p>(* 디렉토리 경로에 Root 경로 /를 붙이지 마시오)</p>
-                    <input type="text" name="GIT" id="GIT" placeholder="Argo CD Repository" value="">
-                    <input type="hidden" name="ADDR" id="ADDR" value="{{ project.GIT }}"  maxlength="100">
-                    <input type="hidden" name="PN" id="PN" value="{{ project.NAME }}"  maxlength="100">
-                    <input type="hidden" name="PID" id="PID" value="{{ project.id }}"  maxlength="100">
-                    <input type="hidden" name="KIND" id="KIND" value="{{ project.KIND }}"  maxlength="100">
-                    <button type="submit" class="button-55" role="button">배포하기</button>
+                    <form id="argocd" method='post' class='post-form my-3' action="{% url 'pybo:customapp' %}">
+                        {% csrf_token %}
+                        <p><strong>Argo CD Deploy</strong></p>
+                        <p>(* 디렉토리 경로에 Root 경로 /를 붙이지 마시오)</p>
+                        <input type="text" name="GIT" id="GIT" placeholder="Argo CD Repository" value="">
+                        <input type="hidden" name="ADDR" id="ADDR" value="{{ project.GIT }}"  maxlength="100">
+                        <input type="hidden" name="PN" id="PN" value="{{ project.NAME }}"  maxlength="100">
+                        <input type="hidden" name="PID" id="PID" value="{{ project.id }}"  maxlength="100">
+                        <input type="hidden" name="KIND" id="KIND" value="{{ project.KIND }}"  maxlength="100">
+                        <button type="submit" class="button-55" role="button" onclick = "deploycheck()">배포하기</button>
                     </form>
                 </th>
             </tr>
@@ -170,6 +169,43 @@
             function sleep(ms) {
                 const wakeUpTime = Date.now() + ms;
                 while (Date.now() < wakeUpTime) {}
+            }
+        </script>
+        <div>
+            <input type="hidden" name="ppw" id="ppw" value="{{ project.PASSWORD }}" maxlength="100">
+        </div>
+        <script type='text/javascript'>
+            function buildcheck() {
+                const ppw = $('input[name="ppw"]').val();
+                const pid = $('input[name="PID"]').val();
+                var pw = prompt("비밀번호를 입력하시오.")
+                if (pw != ppw)
+                {
+                    alert('비밀번호가 일치하지 않습니다.')
+                    document.getElementById('jenkins').action = ''
+                }
+            }
+        
+            function deploycheck() {
+                const ppw = $('input[name="ppw"]').val();
+                const pid = $('input[name="PID"]').val();
+                var pw = prompt("비밀번호를 입력하시오.")
+                if (pw != ppw)
+                {
+                    alert('비밀번호가 일치하지 않습니다.')
+                    document.getElementById('argocd').action = ''
+                }
+            }
+
+            function domaincheck() {
+                const ppw = $('input[name="ppw"]').val();
+                const pid = $('input[name="PID"]').val();
+                var pw = prompt("비밀번호를 입력하시오.")
+                if (pw != ppw)
+                {
+                    alert('비밀번호가 일치하지 않습니다.')
+                    document.getElementById('domain').action = ''
+                }
             }
         </script>
 {% endblock %}
