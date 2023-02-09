@@ -85,17 +85,14 @@
     </div>
 </div>
 <hr width="75%" style="margin-left: 14%">
-<a draggable="false" href="javascript:void(0)" style="color:red; margin-left: 14%;" class="delete btn btn-sm btn-outline-secondary" data-uri="{% url 'pybo:project_delete' project.id %}">프로젝트 삭제</a>
-<script type='text/javascript'>
-    const delete_elements = document.getElementsByClassName("delete");
-    Array.from(delete_elements).forEach(function(element) {
-        element.addEventListener('click', function() {
-            if(confirm("정말로 삭제하시겠습니까?")) {
-                location.href = this.dataset.uri;
-            };
-        });
-    });
-</script>
+<table width="400">
+    <th style="padding-left: 260px;">
+        <form id="delete" method="post" class='post-form my-3' action="{% url 'pybo:project_delete' project.id %}">
+            {% csrf_token %}
+            <button type="submit" style="color:red" class="button-55" role="button" onclick = "deletecheck()">프로젝트 삭제</button>
+        </form>
+    </th>
+</table>
 <div>
     <input type="hidden" name="ppw" id="ppw" value="{{ project.PASSWORD }}" maxlength="100">
 </div>
@@ -121,5 +118,23 @@
             document.getElementById('dbcreate').action = ''
         }
     }
+
+    function deletecheck() {
+                const ppw = $('input[name="ppw"]').val();
+                const pid = $('input[name="PID"]').val();
+                var pw = prompt("비밀번호를 입력하시오.")
+                if (pw == ppw)
+                {
+                    if(!(confirm("정말로 삭제하시겠습니까?")))
+                    {
+                        document.getElementById('delete').action = ''
+                    }
+                }
+                else
+                {
+                    alert('비밀번호가 일치하지 않습니다.')
+                    document.getElementById('delete').action = ''
+                }
+            }
 </script>
 {% endblock %}
