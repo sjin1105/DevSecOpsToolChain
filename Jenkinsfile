@@ -1,9 +1,5 @@
  node {
-  def app
-  def dockerfile
-  def anchorefile
-	
-  try {
+	 
     stage('Checkout') {
       // Clone the git repository
       checkout scm
@@ -19,7 +15,4 @@
 	    app.push("$BUILD_NUMBER")
 	    app.push("latest")
       }
-      sh script: "echo Build completed"
-    }
-  }
 }
