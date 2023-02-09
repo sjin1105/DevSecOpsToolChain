@@ -1,8 +1,12 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from ..models import Project
+from ..models import Project, K8s
 import requests
 import json
 import base64
+
+def token_def():
+    token = K8s.objects.values()[0]['TOKEN']
+    return token
 
 def create_jenkins(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
@@ -68,14 +72,14 @@ def create_jenkins(request, project_id):
     stage('Build') {
       // Build the image and push it to a staging repository
       app = docker.build("projects/$JOB_NAME", "--network host -f Dockerfile .")
-	  docker.withRegistry('https://192.168.160.244', 'harbor') {
+	  docker.withRegistry('https://core.innogrid.duckdns.org', 'harbor') {
 	    app.push("$BUILD_NUMBER")
 	    app.push("latest")
       }
       sh script: "echo Build completed"
     }
     stage('Anchore Image Scan') {
-        writeFile file: anchorefile, text: "192.168.160.244/projects" + "/${JOB_NAME}" + ":${BUILD_NUMBER}" + " " + dockerfile
+        writeFile file: anchorefile, text: "core.innogrid.duckdns.org/projects" + "/${JOB_NAME}" + ":${BUILD_NUMBER}" + " " + dockerfile
         anchore name: anchorefile, \
 	      engineurl: 'http://192.168.160.244:8228/v1', \
 	      engineCredentialsId: 'admin', \
@@ -134,6 +138,9 @@ def create_jenkins(request, project_id):
         headers = {"Authorization": "Bearer {}".format(project.GITTOKEN), "Accept": "application/vnd.github+json"}
         api_response = requests.put(request_url2, data=json.dumps(data2), headers=headers)
         api_json = api_response.json()
+
+        context = {'project': project, 'state': 'GitHub에 작성이 완료되었습니다.'}
+
         return redirect('pybo:github_listfile', project_id=project.id)
 
 
@@ -208,14 +215,14 @@ def github_createfile(request, project_id):
             api_response = requests.put(request_url, data=json.dumps(data), headers=headers)
             api_json = api_response.json()
             data = ""
-        
+            filekind = 'file'
+            extension = ''
         
         else:
             request_url = "https://api.github.com/repos/{}/{}/contents{}{}".format(userid, project.NAME, request.POST['PATH'], request.POST['FN'])
             headers = {"Accept": "application/vnd.github+json", "Authorization": "Bearer {}".format(project.GITTOKEN)}
             api_response = requests.get(request_url, headers=headers)
             api_json = api_response.json()
-            print(api_json['name'])
             api_byte = base64.b64decode(api_json['content'])
             try:
                 data = api_byte.decode('ascii')
@@ -265,7 +272,7 @@ def github_editfile(request, project_id):
             context = {'project': project, 'state': '잘못되었습니다.'}
         else:
             data = request.POST['data']
-            print(data)
+
             base = data.encode(encoding='utf-8')
             ba64 = base64.b64encode(base)
             result_data = ba64.decode('ascii')
@@ -339,7 +346,7 @@ def github_fileupload(request, project_id):
 
     data = request.FILES['file'].read()
     name = request.FILES['file'].name
-    print(name)
+
     ba64 = base64.b64encode(data)
     result_data = ba64.decode('ascii')
 
@@ -370,7 +377,5 @@ def github_fileupload(request, project_id):
     headers = {"Authorization": "Bearer {}".format(project.GITTOKEN), "Accept": "application/vnd.github+json"}
     api_response = requests.put(request_url, data=json.dumps(data), headers=headers)
     api_json = api_response.json()
-    print(api_json)
-    context = {'project': project, 'state': 'File Upload 완료'}
 
     return redirect('pybo:github_listfile', project_id=project.id)
