@@ -21,4 +21,4 @@ spec:
         - containerPort: 6666
           protocol: TCP
       imagePullSecrets:
-      - name: harbor
+      - name: docker-secret
