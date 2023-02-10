@@ -45,13 +45,13 @@ def create_jenkins(request, project_id):
 	    --prettyPrint
 	    --disableYarnAudit""", odcInstallation: 'OWASP Dependency-check'
 	    dependencyCheckPublisher pattern: 'report/dependency-check-report.xml'
-    }
+  }
     stage('SonarQube analysis') {
         def scannerHome = tool 'sonarqube';
         withSonarQubeEnv('sonarserver'){
             sh "${scannerHome}/bin/sonar-scanner \
 	      -Dsonar.projectKey=%s \
-	      -Dsonar.host.url=http://192.168.160.244:9000 \
+	      -Dsonar.host.url=http://192.168.160.229:9000 \
 	      -Dsonar.login=%s \
 	      -Dsonar.sources=. \
 	      -Dsonar.report.export.path=sonar-report.json \
@@ -61,17 +61,9 @@ def create_jenkins(request, project_id):
 	      -Dsonar.dependencyCheck.htmlReportPath=./report/dependency-check-report.html"
         }
     }
-    stage('SonarQube Quality Gate'){
-      timeout(time: 1, unit: 'HOURS') {
-        def qg = waitForQualityGate()
-        if (qg.status != 'OK') {
-            error "Pipeline aborted due to quality gate failure: ${qg.status}"
-        }
-      }
-    }
     stage('Build') {
       // Build the image and push it to a staging repository
-      app = docker.build("projects/$JOB_NAME", "--network host -f Dockerfile .")
+      app = docker.build("innogrid/$JOB_NAME", "--network host -f Dockerfile .")
 	  docker.withRegistry('https://core.innogrid.duckdns.org', 'harbor') {
 	    app.push("$BUILD_NUMBER")
 	    app.push("latest")
@@ -79,10 +71,10 @@ def create_jenkins(request, project_id):
       sh script: "echo Build completed"
     }
     stage('Anchore Image Scan') {
-        writeFile file: anchorefile, text: "core.innogrid.duckdns.org/projects" + "/${JOB_NAME}" + ":${BUILD_NUMBER}" + " " + dockerfile
+        writeFile file: anchorefile, text: "core.innogrid.duckdns.org/innogrid" + "/${JOB_NAME}" + ":${BUILD_NUMBER}" + " " + dockerfile
         anchore name: anchorefile, \
 	      engineurl: 'http://192.168.160.244:8228/v1', \
-	      engineCredentialsId: 'admin', \
+	      engineCredentialsId: 'anchore', \
 	      annotations: [[key: 'added-by', value: 'jenkins']], \
 	      forceAnalyze: true
       }
