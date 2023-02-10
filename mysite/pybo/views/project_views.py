@@ -91,11 +91,10 @@ def project(request):
                     api_response = requests.post(request_url, data=data, auth=user)
                     api_json = api_response.json()
                     sonar_token = api_json['token']
-                    print(sonar_token)
 
                     # sonarqube project 생성
-                    request_url = "http://192.168.160.229:9000/api/projects/create"
-                    user = ("admin", "dkagh1.")
+                    request_url = "http://192.168.160.244:9000/api/projects/create"
+                    user = ("admin", "admin123")
                     data = {
                         "name": request.POST["NAME"],
                         "project": request.POST["NAME"],
@@ -138,7 +137,7 @@ def project(request):
             except:
                 context = {'project': project, 'state' : 'Argo CD Project 생성 실패'}
                 return render(request, 'pybo/mainpage.html', context)
-
+            ## K8s
             try:
                 request_url = "https://10.0.0.79:6443/api/v1/namespaces/"
                 headers = {"Authorization": "Bearer {}".format(token)}
@@ -151,6 +150,7 @@ def project(request):
                 }
                 api_response = requests.post(request_url, headers=headers, data=json.dumps(data), verify=False)
                 api_json = api_response.json()
+
             except:
                 context = {'project': project, 'state' : 'Kubernetes Project 생성 실패'}
                 return render(request, 'pybo/mainpage.html', context)
@@ -176,13 +176,11 @@ def project_delete(request, project_id):
         api_response = requests.get(request_url, headers=headers)
         api_json = api_response.json()
         userid = api_json['login']
-        print(userid)
 
         # Git hub 삭제
         request_url = "https://api.github.com/repos/{}/{}".format(userid, project.NAME)
         headers = {"Authorization": "Bearer {}".format(project.GITTOKEN), "Accept": "application/vnd.github+json"}
         api_response = requests.delete(request_url, headers=headers)
-        print('delete')
         
     # Jenkins Pipeline 삭제
     if project.KIND != 'App':
@@ -191,21 +189,15 @@ def project_delete(request, project_id):
 
     #sonarqube 삭제
     if project.KIND == 'GitHub App':
-        request_url = "http://192.168.160.229:9000/api/projects/delete"
-        user = ("admin", "dkagh1.")
-        data = {"project": project.NAME}
-        api_response = requests.post(request_url, data=data, auth=user)
-
         request_url = "http://192.168.160.229:9000/api/user_tokens/revoke"
-        user = ("admin", "dkagh1.")
+        user = ("admin", "admin123")
         data = {"name": project.NAME}
-        api_response = requests.post(request_url, data=data, auth=user)
+        api_response = requests.delete(request_url, data=data, auth=user)
 
     # ArgoCD Project 삭제
     request_url = """{}api/v1/projects/{}""".format(argo_host, project.NAME)
     headers = {"Authorization": "Bearer {}".format(argocd_accesstoken)}
     api_response = requests.delete(request_url, headers=headers)
-    print(api_response)
 
     # Namespace 삭제
     request_url = "https://10.0.0.79:6443/api/v1/namespaces/{}/".format(project.NAME)
@@ -215,4 +207,3 @@ def project_delete(request, project_id):
     
     project.delete()
     return redirect('pybo:index')
-
