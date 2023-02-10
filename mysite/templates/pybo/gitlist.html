@@ -24,6 +24,7 @@
                     <button type='submit' class="button-55" role="button" value="Jenkins">기본 Jenkinsfile 작성</button>
                     <br><br>
                     <p style="color: red">( ** 보안 검사가 포함된 기본 Jenkinsfile로 빌드할 시 이미지명 : core.innogrid.duckdns.org/projects/(프로젝트명):latest</p>
+                    <p style="color: red">( ** 보안 검사가 포함된 기본 Jenkinsfile로 빌드할 시 이미지 PullSecrets : docker-secret</p>
                 </form>
                 <form method='post' class='post-form my-3' enctype="multipart/form-data" action="{% url 'pybo:github_fileupload' project.id %}">
                     {% csrf_token %}
