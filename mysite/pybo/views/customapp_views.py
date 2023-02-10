@@ -75,7 +75,7 @@ def jenkins_backup(request):
 
 def customapp(request):
     # harbor secret 생성
-    if request.POST['KIND'] == 'GitHub App':
+    if request.POST['KIND'] == 'GitHub App' or request.POST['KIND'] == 'Custom App':
         token = token_def()
         request_url = "https://10.0.0.79:6443/api/v1/namespaces/{}/secrets".format(request.POST['PN'])
         headers = {"Authorization": "Bearer {}".format(token), "Content-type": "application/yaml"}
