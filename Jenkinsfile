@@ -41,7 +41,6 @@ node {
       app = docker.build("innogrid/$JOB_NAME", "--network host -f Dockerfile .")
 	  docker.withRegistry('https://core.innogrid.duckdns.org', 'harbor') {
 	    app.push("$BUILD_NUMBER")
-	    app.push("latest")
       }
       sh script: "echo Build completed"
     }
@@ -62,7 +61,6 @@ node {
     stage('Cleanup') {
       sh script: "echo Clean up"
     	}	
-     echo currentBuild.result
      // send slack notification
      if(currentBuild.result.equals("SUCCESS")){
 	slackSend (channel: '#jenkins-notification', color: '#00FF00', message: "build success : Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
