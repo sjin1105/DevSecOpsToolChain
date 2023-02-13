@@ -20,5 +20,6 @@ spec:
         ports:
         - containerPort: 6666
           protocol: TCP
+      imagePullPolicy: Always
       imagePullSecrets:
       - name: docker-secret
