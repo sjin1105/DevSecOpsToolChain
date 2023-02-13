@@ -36,7 +36,7 @@ node {
 	      -Dsonar.dependencyCheck.htmlReportPath=./report/dependency-check-report.html"
         }
     }
-    stage('Build') {
+    stage('Build Image') {
       // Build the image and push it to a staging repository
       app = docker.build("innogrid/$JOB_NAME", "--network host -f Dockerfile .")
 	  docker.withRegistry('https://core.innogrid.duckdns.org', 'harbor') {
