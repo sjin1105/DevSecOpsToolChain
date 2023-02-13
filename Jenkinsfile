@@ -41,7 +41,6 @@ node {
 	  docker.withRegistry('https://core.innogrid.duckdns.org', 'harbor') {
 	    app.push("$BUILD_NUMBER")
       }
-      sh script: "echo Build completed"
     }
     stage('Anchore Image Scan') {
         writeFile file: anchorefile, text: "core.innogrid.duckdns.org/innogrid" + "/${JOB_NAME}" + ":${BUILD_NUMBER}" + " " + dockerfile
