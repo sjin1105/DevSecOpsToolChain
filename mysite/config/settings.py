@@ -80,7 +80,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'HOST' : 'hippo-ha.postgres-operator.svc.cluster.local',
-        'NAME' : 'django
+        'NAME' : 'django',
         'PORT' : '5432',
         'USER' : 'admin',
         'PASSWORD' : 'dkagh1.',
