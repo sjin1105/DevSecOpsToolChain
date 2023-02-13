@@ -2,7 +2,9 @@ server {
         listen 6666;
         server_name django;
 
-        location = /favicon.ico { access_log off; log_not_found off; }
+        location /favicon.ico {
+            alias /mysite/static_root/favicon.ico;
+        } 
 
         location /static {
                 alias /mysite/static_root;
