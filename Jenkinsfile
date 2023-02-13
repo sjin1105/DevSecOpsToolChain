@@ -58,8 +58,8 @@ node {
         currentBuild.result = 'FAILURE'
 	throw e
   } finally {
-    stage('Complete') {
-      sh script: "echo Pipeline Complete"
+    stage('Pipeline End') {
+      sh script: "echo Pipeline End"
     	}	
      // send slack notification
      if(currentBuild.result.equals("SUCCESS")){
