@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-%y76g9r--^wmn_79@2dt6nxc9k#1io%wx20b#+tg*+s526-&w+'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -78,14 +78,15 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'django',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'HOST' : 'hippo-ha.postgres-operator.svc.cluster.local',
+        'PORT' : '5432',
         'USER' : 'admin',
         'PASSWORD' : 'dkagh1.',
-        'HOST' : '127.0.0.1',
         'PORT' : '3306',
     },
 }
+
 
 CSRF_TRUSTED_ORIGINS = ['https://*.duckdns.org']
 
