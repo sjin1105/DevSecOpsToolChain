@@ -9,8 +9,8 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 def token_def():
     token = K8s.objects.values()[0]['TOKEN']
     return token
+    
 def grafana(request):
-    print(DNS.objects.values())
     context = {'dns' : DNS.objects.values()[0]['domain']}
     return render(request, 'pybo/grafana.html', context)
 

@@ -1,6 +1,20 @@
 {% extends 'base.html' %}
 {% block content %}
 {% load static %}
+<div>
+    <input type="hidden" name="pid" id="pid" value="{{ project.id }}" maxlength="100">
+    <input type="hidden" name="ppw" id="ppw" value="{{ project.PASSWORD }}" maxlength="100">
+</div>
+<script type='text/javascript'>
+    const ppw = $('input[name="ppw"]').val();
+    const pid = $('input[name="pid"]').val();
+    var pw = prompt("비밀번호를 입력하시오.")
+    if (pw != ppw)
+    {
+        alert('비밀번호가 일치하지 않습니다.')
+        location.href='/pybo/' + pid + '/'
+    }
+</script>
 <h2 style="border-radius: 50px 15px 50px 0; border-left: inset; margin-right: 85%; padding: 0.6em; background: #EBEEF0;">&nbsp&nbsp Monitoring</h2>
 <div class='container'>
     <h3>Project Name &nbsp : {{ project.NAME }}</h3>

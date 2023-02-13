@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-%y76g9r--^wmn_79@2dt6nxc9k#1io%wx20b#+tg*+s526-&w+'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -78,15 +78,16 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'django',
-        'USER' : 'django',
-        'PASSWORD' : 'django',
-        'HOST' : 'hippo-ha.postgres-operator.svc.cluster.local',
-        'PORT' : '5432',
+        'USER' : 'admin',
+        'PASSWORD' : 'dkagh1.',
+        'HOST' : '127.0.0.1',
+        'PORT' : '3306',
     },
 }
 
+CSRF_TRUSTED_ORIGINS = ['https://*.duckdns.org']
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -126,6 +127,7 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
+STATIC_ROOT = BASE_DIR / 'static_root/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -135,5 +137,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = '/'
 
 LOGOUT_REDIRECT_URL = '/'
-
-CSRF_TRUSTED_ORIGINS = ['https://*.innogrid.duckdns.org']

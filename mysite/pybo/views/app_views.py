@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from ..models import Project, ArgoCD, DNS
 import requests
 import json
@@ -40,7 +40,7 @@ def webapp(request):
         print("Project doesn't exist")
     
     dns = DNS.objects.values()[0]['domain']
-    
+
     if 'web' in request.POST:
         response = False
         helm_value0 = f"{request.POST['WNAME']}"
@@ -188,7 +188,6 @@ def dbapp(request):
             context = {'project' : project, 'url' : "%s%s.xyz" %(request.POST['PN'], request.POST['db']), 'state' : 'create'}
 
             if api_response.ok:
-                response = True
                 print(f"argocd 애플리케이션 생성 성공")
             else:
                 print("[332] create argocd application is failed: {}".format(api_response.json()))
