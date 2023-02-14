@@ -4,7 +4,7 @@ Kubernetes Cluster와 Jenkins, SonarQube, Anchore, Dependency-Check를 위한 �
 
 Docker image를 사용하여 Django 이미지 빌드
 ```
-docker image build -t . 
+docker build -t . 
 ```
 Kubernetes에서 동작
 Django Admin 페이지에서 필수 정보 입력
