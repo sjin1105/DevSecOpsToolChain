@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: django-deploy
-        image: core.innogrid.duckdns.org/innogrid/django:18
+        image: core.innogrid.duckdns.org/innogrid/django:19
         ports:
         - containerPort: 6666
           protocol: TCP
