@@ -27,7 +27,7 @@ node {
             sh "${scannerHome}/bin/sonar-scanner \
 	      -Dsonar.projectKey=mygithub \
 	      -Dsonar.host.url=http://192.168.160.229:9000 \
-	      -Dsonar.login=1b745efcc5e33501c972e9c9fabc4b6f76d26f15 \
+	      -Dsonar.login=a2a23abcd1f337f23672d6168d27e934832017b7 \
 	      -Dsonar.sources=. \
 	      -Dsonar.report.export.path=sonar-report.json \
 	      -Dsonar.exclusions=report/* \
