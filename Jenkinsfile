@@ -25,9 +25,9 @@ node {
         def scannerHome = tool 'sonarqube';
         withSonarQubeEnv('sonarserver'){
             sh "${scannerHome}/bin/sonar-scanner \
-	      -Dsonar.projectKey=sonarqube \
+	      -Dsonar.projectKey=Projects \
 	      -Dsonar.host.url=http://192.168.160.229:9000 \
-	      -Dsonar.login=041816305b6bb7cef760509525dd30fc4d53c161 \
+	      -Dsonar.login=e744cf03453d8d5e95107f3e6de35d03bd88ab5b \
 	      -Dsonar.sources=. \
 	      -Dsonar.report.export.path=sonar-report.json \
 	      -Dsonar.exclusions=report/* \
