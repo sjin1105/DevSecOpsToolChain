@@ -27,7 +27,7 @@ node {
             sh "${scannerHome}/bin/sonar-scanner \
 	      -Dsonar.projectKey=django \
 	      -Dsonar.host.url=http://192.168.160.244:9000 \
-	      -Dsonar.login=c83cd0978fe63be2da57f6821f4ee76609a1185b \
+	      -Dsonar.login= d2ce8ccc4d5e8fe227e13a2a75478987bb1761cb \
 	      -Dsonar.sources=. \
 	      -Dsonar.report.export.path=sonar-report.json \
 	      -Dsonar.exclusions=report/* \
