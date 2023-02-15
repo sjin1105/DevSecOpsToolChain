@@ -26,8 +26,8 @@ node {
         withSonarQubeEnv('sonarserver'){
             sh "${scannerHome}/bin/sonar-scanner \
 	      -Dsonar.projectKey=django \
-	      -Dsonar.host.url=http://192.168.160.244:9000 \
-	      -Dsonar.login=d2ce8ccc4d5e8fe227e13a2a75478987bb1761cb \
+	      -Dsonar.host.url=http://192.168.160.229:9000 \
+	      -Dsonar.login=037822abb6750904c7b35b0d8fb5c4bbb9f50bdb \
 	      -Dsonar.sources=. \
 	      -Dsonar.report.export.path=sonar-report.json \
 	      -Dsonar.exclusions=report/* \
