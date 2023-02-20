@@ -46,12 +46,7 @@ node {
       sh script: "echo Build completed"
     }
     stage('Anchore Image Scan') {
-        writeFile file: anchorefile, text: "core.innogrid.duckdns.org/innogrid" + "/${JOB_NAME}" + ":${BUILD_NUMBER}" + " " + dockerfile
-        anchore name: anchorefile, \
-	      engineurl: 'http://192.168.160.244:8228/v1', \
-	      engineCredentialsId: 'anchore', \
-	      annotations: [[key: 'added-by', value: 'jenkins']], \
-	      forceAnalyze: true
+	sh 'grype innogrid/$JOB_NAME:$BUILD_NUMBER --scope AllLayers'
       }
       currentBuild.result = "SUCCESS"
   } catch (e) {
