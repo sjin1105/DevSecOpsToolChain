@@ -43,7 +43,7 @@ node {
 	docker.withRegistry('https://core.innogrid.duckdns.org', 'harbor') {
 	app.push("$BUILD_NUMBER")
 	app.push("latest")
-	sh 'grype innogrid/$JOB_NAME:$BUILD_NUMBER --scope AllLayers'
+	sh 'grype innogrid/$JOB_NAME --scope AllLayers'
       }
       sh script: "echo Build completed"
     }
