@@ -43,12 +43,14 @@ node {
 	docker.withRegistry('https://core.innogrid.duckdns.org', 'harbor') {
 	app.push("$BUILD_NUMBER")
 	app.push("latest")
-	sh 'grype innogrid/$JOB_NAME --scope AllLayers'
+	
       }
       sh script: "echo Build completed"
     }
     stage('Anchore Image Scan') {
-	
+    	docker.withRegistry('https://core.innogrid.duckdns.org', 'harbor') {
+	    sh 'grype innogrid/$JOB_NAME:latest --scope AllLayers'
+	}
       }
       currentBuild.result = "SUCCESS"
   } catch (e) {
