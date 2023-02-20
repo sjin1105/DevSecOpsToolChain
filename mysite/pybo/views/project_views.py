@@ -192,7 +192,7 @@ def project_delete(request, project_id):
         request_url = "http://192.168.160.229:9000/api/user_tokens/revoke"
         user = ("admin", "dkagh1.")
         data = {"name": project.NAME}
-        api_response = requests.delete(request_url, data=data, auth=user)
+        api_response = requests.post(request_url, data=data, auth=user)
 
     # ArgoCD Project 삭제
     request_url = """{}api/v1/projects/{}""".format(argo_host, project.NAME)
