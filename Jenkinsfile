@@ -39,8 +39,9 @@ node {
     stage('Build') {
       // Build the image and push it to a staging repository
       app = docker.build("innogrid/$JOB_NAME", "--network host -f Dockerfile .")
-      	sh 'grype innogrid/$JOB_NAME:$BUILD_NUMBER --scope AllLayers'
+      	
 	docker.withRegistry('https://core.innogrid.duckdns.org', 'harbor') {
+	sh 'grype innogrid/$JOB_NAME:$BUILD_NUMBER --scope AllLayers'
 	app.push("$BUILD_NUMBER")
 	app.push("latest")
       }
