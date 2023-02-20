@@ -23,7 +23,7 @@ def create_jenkins(request, project_id):
 
         # Jenkinsfile 생성
         jfile = ''' 
-  node {
+node {
   def app
   def dockerfile
   def anchorefile
@@ -43,7 +43,7 @@ def create_jenkins(request, project_id):
 	    -f "ALL"
 	    -o "./report/"
 	    --prettyPrint
-	    --disableYarnAudit""", odcInstallation: 'OWASP Dependency-check'
+	    --disableYarnAudit""", odcInstallation: 'OWASP-Dependency-check'
 	    dependencyCheckPublisher pattern: 'report/dependency-check-report.xml'
   }
     stage('SonarQube analysis') {
@@ -64,19 +64,18 @@ def create_jenkins(request, project_id):
     stage('Build') {
       // Build the image and push it to a staging repository
       app = docker.build("innogrid/$JOB_NAME", "--network host -f Dockerfile .")
-	  docker.withRegistry('https://core.innogrid.duckdns.org', 'harbor') {
-	    app.push("$BUILD_NUMBER")
-	    app.push("latest")
+      	
+	docker.withRegistry('https://core.innogrid.duckdns.org', 'harbor') {
+	app.push("$BUILD_NUMBER")
+	app.push("latest")
+	
       }
       sh script: "echo Build completed"
     }
     stage('Anchore Image Scan') {
-        writeFile file: anchorefile, text: "core.innogrid.duckdns.org/innogrid" + "/${JOB_NAME}" + ":${BUILD_NUMBER}" + " " + dockerfile
-        anchore name: anchorefile, \
-	      engineurl: 'http://192.168.160.244:8228/v1', \
-	      engineCredentialsId: 'anchore', \
-	      annotations: [[key: 'added-by', value: 'jenkins']], \
-	      forceAnalyze: true
+    	docker.withRegistry('https://core.innogrid.duckdns.org', 'harbor') {
+	    sh 'grype innogrid/$JOB_NAME:latest --scope AllLayers'
+	}
       }
       currentBuild.result = "SUCCESS"
   } catch (e) {
