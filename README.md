@@ -36,3 +36,11 @@ Django Admin 페이지에서 필수 정보 입력
 
 ![구성도 drawio](https://user-images.githubusercontent.com/76959621/218671657-cdecc1a6-c49b-4250-8280-6fe6bc586f5f.png)
 
+
+## Team
+조원|역할
+---|---|
+이승진|Web Service 개발, API 개발, Kubernetes 구축, Logging & Monitoring 구축
+강대현|Web Servie 개발, API 개발, Kubernetes 구축, Logging & Monitoring 구축
+문종호|Security, Kubernetes, Private Repository
+조국환|Security, Kubernetes, Private Repository
